@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #020104;
+	--foreground: #fcfcfc;
+	--brand-orange: #ff5900;
+	--brand-black: #1f1f21;
+	--brand-yellow: #fcde05;
+	--brand-lime: #c2f412;
+	--brand-purple: #9b5de5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-brand: var(--brand-orange);
+	--color-muted: #222222;
+	--font-sans: var(--font-chakra-petch);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: #020104;
+		--foreground: #fcfcfc;
+	}
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-chakra-petch), system-ui, -apple-system, Arial, Helvetica, sans-serif;
 }
+
+@utility container-px {
+	padding-left: 1.25rem;
+	padding-right: 1.25rem;
+}
+
+/* Buttons */
+.btn-primary {
+	@apply inline-flex items-center justify-center px-6 py-3 rounded bg-[var(--brand-orange)] text-black font-semibold tracking-wide shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:brightness-110 transition;
+}
+
+/* Headings per typography guide (approx) */
+.h1 { @apply text-[clamp(48px,8vw,96px)] font-extrabold leading-[0.95]; }
+.h2 { @apply text-[clamp(32px,5.5vw,56px)] font-bold; }
+.h3 { @apply text-[clamp(24px,4vw,36px)] font-bold; }
+.h4 { @apply text-[clamp(18px,3vw,24px)] font-semibold; }
+.h5 { @apply text-[clamp(16px,2.5vw,18px)] font-medium; }
+
+/***** Hero label styles *****/
+.hero-label { @apply inline-block bg-black text-white border-2 border-white px-4 py-2 shadow-[0_0_0_6px_rgba(0,0,0,0.6)]; }
+.hero-underline { height: 14px; background: var(--brand-yellow); }
