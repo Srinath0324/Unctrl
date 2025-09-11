@@ -1,22 +1,29 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
+function Row({ direction }) {
+	const items = Array.from({ length: 10 });
+	return (
+		<div className={`marquee-wrap ${direction === "left" ? "marquee-left" : "marquee-right"}`}>
+			<div className="marquee-track">
+				{items.map((_, i) => (
+					<div key={i} className="placeholder-card" />
+				))}
+				{items.map((_, i) => (
+					<div key={`dup-${i}`} className="placeholder-card" />
+				))}
+			</div>
+		</div>
+	);
+}
 
 export default function Vibe() {
 	return (
-		<section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
-			<Image src="/images/vibe-video-cover.png" alt="vibe" fill className="object-cover" />
-			<div className="absolute inset-0 bg-black/30" />
-			<div className="relative z-10 flex flex-col items-center gap-6">
-				<motion.button
-					initial={{ opacity: 0, y: 10 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true }}
-					transition={{ duration: 0.4 }}
-					className="bg-[#FF5900] px-8 py-4 rounded text-black font-semibold">
-					Pre order
-				</motion.button>
+		<section id="vibe" className="relative min-h-[100svh] bg-black flex flex-col justify-center gap-8">
+			<div className="px-6 pt-8">
+				<Row direction="right" />
+			</div>
+			<div className="px-6 pb-8">
+				<Row direction="left" />
 			</div>
 		</section>
 	);

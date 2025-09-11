@@ -25,6 +25,8 @@
 	}
 }
 
+html { scroll-behavior: smooth; }
+
 body {
 	background: var(--background);
 	color: var(--foreground);
@@ -51,3 +53,28 @@ body {
 /***** Hero label styles *****/
 .hero-label { @apply inline-block bg-black text-white border-2 border-white px-4 py-2 shadow-[0_0_0_6px_rgba(0,0,0,0.6)]; }
 .hero-underline { height: 14px; background: var(--brand-yellow); }
+
+/* Page-by-page snap */
+html, body { height: 100%; overflow: hidden; }
+main { height: 100dvh; overflow: auto; scroll-snap-type: y mandatory; }
+main > section, main > footer { min-height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always; opacity: 0; transform: translateY(24px); transition: opacity 300ms ease, transform 400ms ease; }
+main > section.is-in-view, main > footer.is-in-view { opacity: 1; transform: none; }
+
+/* Marquee rows */
+@keyframes marquee-left {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+	0% { transform: translateX(-50%); }
+	100% { transform: translateX(0); }
+}
+.marquee-track { display: flex; gap: 1.5rem; will-change: transform; }
+.marquee-wrap { position: relative; overflow: hidden; }
+.marquee-left .marquee-track { animation: marquee-left 30s linear infinite; }
+.marquee-right .marquee-track { animation: marquee-right 30s linear infinite; transform: translateX(-50%); }
+.placeholder-card { flex: 0 0 auto; width: clamp(240px, 35vw, 420px); height: clamp(150px, 22vw, 260px); background: #d9d9d9; border: 4px solid #000; }
+
+@media (prefers-reduced-motion: reduce) {
+	.marquee-left .marquee-track, .marquee-right .marquee-track { animation: none; transform: none; }
+}

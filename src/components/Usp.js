@@ -1,18 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Usp() {
 	return (
-		<section className="relative bg-[#0b0b0c] py-24">
-			<div className="max-w-[1200px] mx-auto container-px grid grid-cols-12 gap-3">
-				{/* Row 1 */}
-				<motion.div initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} className="col-span-7 aspect-[16/9] bg-[#d9d9d9]" />
-				<motion.div initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} className="col-span-4 col-start-9 aspect-[16/9] bg-[#d9d9d9]" />
-				<motion.div initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} className="col-span-1 col-start-12 aspect-[16/9] bg-[#d9d9d9]" />
-				{/* Row 2 */}
-				<motion.div initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} className="col-span-5 aspect-[16/9] bg-[#d9d9d9]" />
-				<motion.div initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} className="col-span-7 aspect-[16/9] bg-[#d9d9d9]" />
+		<section id="usp" className="relative min-h-[100svh] overflow-hidden bg-black flex items-center justify-center">
+			<div className="absolute inset-0 p-6 sm:p-10 md:p-14">
+				<Image src="/images/usp.png" alt="USP" fill className="object-contain object-center" />
 			</div>
 		</section>
 	);

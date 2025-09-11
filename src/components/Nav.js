@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Nav() {
 	return (
-		<header className="fixed z-50 top-0 left-0 right-0 h-[72px] bg-gradient-to-b from-black/70 to-transparent">
+		<header className="fixed z-[60] top-0 left-0 right-0 h-[72px] bg-gradient-to-b from-black/80 to-transparent">
 			<div className="h-full max-w-7xl mx-auto flex items-center justify-between container-px">
-				<div className="flex items-center gap-3">
-					<div className="size-8 rounded bg-[var(--brand-orange)]" />
-					<div className="font-extrabold tracking-widest">UNCTRL</div>
+				<div className="flex items-center">
+					<Image src="/images/logo.png" alt="UNCTRL" width={94} height={94} priority />
 				</div>
-				<nav className="hidden md:flex items-center gap-8">
-					<Link href="#" className="hover:opacity-90">HOME</Link>
-					<Link href="#products" className="hover:opacity-90">PRODUCTS</Link>
+				<nav className="hidden md:flex items-center gap-10 text-white">
+					<Link href="#home" className="text-sm tracking-widest">HOME</Link>
+					<Link href="#products" className="text-sm tracking-widest">PRODUCTS</Link>
+					<Link href="#about" className="text-sm tracking-widest opacity-70 pointer-events-none">ABOUT US</Link>
+					<Link href="#community" className="text-sm tracking-widest">COMMUNITY</Link>
+					<Link href="#blog" className="text-sm tracking-widest opacity-70 pointer-events-none">BLOG</Link>
 					<button className="btn-primary">Pre-order</button>
 				</nav>
 			</div>
