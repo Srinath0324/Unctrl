@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Nav() {
 	return (
-		<header className="fixed z-[60] top-0 left-0 right-0 h-[72px] bg-gradient-to-b from-black/80 to-transparent">
+		<header className="fixed z-[60] top-0 left-0 right-0 h-[72px] bg-black">
 			<div className="h-full max-w-7xl mx-auto flex items-center justify-between container-px">
 				<div className="flex items-center">
 					<Image src="/images/logo.png" alt="UNCTRL" width={94} height={94} priority />
