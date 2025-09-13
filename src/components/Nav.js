@@ -8,7 +8,7 @@ export default function Nav() {
 		<header className="fixed z-[60] top-0 left-0 right-0 h-[72px] bg-black">
 			<div className="h-full max-w-7xl mx-auto flex items-center justify-between container-px">
 				<div className="flex items-center">
-					<Image src="/images/logo.png" alt="UNCTRL" width={94} height={94} priority />
+					<Image src="/assets/gifs/logo.gif" alt="UNCTRL" width={94} height={94} priority />
 				</div>
 				<nav className="hidden md:flex items-center gap-10 text-white">
 					<Link href="#home" className="text-sm tracking-widest">HOME</Link>

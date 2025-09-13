@@ -1,15 +1,20 @@
 "use client";
 
 function Row({ direction }) {
-	const items = Array.from({ length: 10 });
+	const gifs = [
+		"/assets/gifs/video1.gif",
+		"/assets/gifs/video2.gif",
+		"/assets/gifs/video3.gif",
+	];
+
 	return (
 		<div className={`marquee-wrap ${direction === "left" ? "marquee-left" : "marquee-right"}`}>
 			<div className="marquee-track">
-				{items.map((_, i) => (
-					<div key={i} className="placeholder-card" />
+				{gifs.map((src, i) => (
+					<img key={i} src={src} alt={`Vibe GIF ${i + 1}`} className="vibe-gif" />
 				))}
-				{items.map((_, i) => (
-					<div key={`dup-${i}`} className="placeholder-card" />
+				{gifs.map((src, i) => (
+					<img key={`dup-${i}`} src={src} alt={`Vibe GIF duplicate ${i + 1}`} className="vibe-gif" />
 				))}
 			</div>
 		</div>
@@ -18,13 +23,14 @@ function Row({ direction }) {
 
 export default function Vibe() {
 	return (
-		<section id="vibe" className="relative min-h-[100svh] bg-black flex flex-col justify-center gap-8">
-			<div className="px-6 pt-8">
+		<section
+			id="vibe"
+			className="relative min-h-[80vh] bg-black flex flex-col justify-center items-center pt-24 pb-10"
+		>
+			<div className="w-full max-w-[1600px] px-6 space-y-4">
 				<Row direction="right" />
-			</div>
-			<div className="px-6 pb-8">
 				<Row direction="left" />
 			</div>
 		</section>
 	);
-} 
+}

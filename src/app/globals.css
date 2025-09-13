@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-	--background: #020104;
+	--background: #1f1f21;
 	--foreground: #fcfcfc;
 	--brand-orange: #ff5900;
 	--brand-black: #1f1f21;
@@ -20,12 +20,14 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #020104;
+		--background: #1f1f21;
 		--foreground: #fcfcfc;
 	}
 }
 
-html { scroll-behavior: smooth; }
+html {
+	scroll-behavior: smooth;
+}
 
 body {
 	background: var(--background);
@@ -38,43 +40,130 @@ body {
 	padding-right: 1.25rem;
 }
 
-/* Buttons */
 .btn-primary {
-	@apply inline-flex items-center justify-center px-6 py-3 rounded bg-[var(--brand-orange)] text-black font-semibold tracking-wide shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:brightness-110 transition;
+	@apply inline-flex items-center justify-center px-6 py-3 rounded bg-[var(--brand-orange)] text-foreground font-semibold tracking-wide shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:brightness-110 transition;
 }
 
-/* Headings per typography guide (approx) */
-.h1 { @apply text-[clamp(48px,8vw,96px)] font-extrabold leading-[0.95]; }
-.h2 { @apply text-[clamp(32px,5.5vw,56px)] font-bold; }
-.h3 { @apply text-[clamp(24px,4vw,36px)] font-bold; }
-.h4 { @apply text-[clamp(18px,3vw,24px)] font-semibold; }
-.h5 { @apply text-[clamp(16px,2.5vw,18px)] font-medium; }
+.h1 {
+	@apply text-[clamp(48px,8vw,96px)] font-extrabold leading-[0.95];
+}
+.h2 {
+	@apply text-[clamp(32px,5.5vw,56px)] font-bold;
+}
+.h3 {
+	@apply text-[clamp(24px,4vw,36px)] font-bold;
+}
+.h4 {
+	@apply text-[clamp(18px,3vw,24px)] font-semibold;
+}
+.h5 {
+	@apply text-[clamp(16px,2.5vw,18px)] font-medium;
+}
 
-/***** Hero label styles *****/
-.hero-label { @apply inline-block bg-black text-white border-2 border-white px-4 py-2 shadow-[0_0_0_6px_rgba(0,0,0,0.6)]; }
-.hero-underline { height: 14px; background: var(--brand-yellow); }
+.hero-label {
+	@apply inline-block bg-black text-white border-2 border-white px-4 py-2 shadow-[0_0_0_6px_rgba(0,0,0,0.6)];
+}
+.hero-underline {
+	height: 14px;
+	background: var(--brand-yellow);
+}
 
-/* Page-by-page snap */
-html, body { height: 100%; overflow: hidden; }
-main { height: 100dvh; overflow: auto; scroll-snap-type: y mandatory; }
-main > section, main > footer { min-height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always; opacity: 0; transform: translateY(24px); transition: opacity 300ms ease, transform 400ms ease; }
-main > section.is-in-view, main > footer.is-in-view { opacity: 1; transform: none; }
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
 
-/* Marquee rows */
+main {
+	height: 100dvh;
+	overflow: auto;
+	scroll-snap-type: y mandatory;
+}
+
+main > section,
+main > footer {
+	min-height: 100dvh;
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
+	opacity: 0;
+	transform: translateY(24px);
+	transition: opacity 300ms ease, transform 400ms ease;
+}
+
+main > section.is-in-view,
+main > footer.is-in-view {
+	opacity: 1;
+	transform: none;
+}
+
+/* Marquee keyframes */
 @keyframes marquee-left {
-	0% { transform: translateX(0); }
-	100% { transform: translateX(-50%); }
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
 }
+
 @keyframes marquee-right {
-	0% { transform: translateX(-50%); }
-	100% { transform: translateX(0); }
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0);
+	}
 }
-.marquee-track { display: flex; gap: 1.5rem; will-change: transform; }
-.marquee-wrap { position: relative; overflow: hidden; }
-.marquee-left .marquee-track { animation: marquee-left 30s linear infinite; }
-.marquee-right .marquee-track { animation: marquee-right 30s linear infinite; transform: translateX(-50%); }
-.placeholder-card { flex: 0 0 auto; width: clamp(240px, 35vw, 420px); height: clamp(150px, 22vw, 260px); background: #d9d9d9; border: 4px solid #000; }
+
+.marquee-wrap {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+}
+
+.marquee-track {
+	display: flex;
+	gap: 15px;
+	will-change: transform;
+}
+
+.marquee-left .marquee-track {
+	animation: marquee-left 30s linear infinite;
+}
+
+.marquee-right .marquee-track {
+	animation: marquee-right 30s linear infinite;
+	transform: translateX(-50%);
+}
+
+.vibe-gif {
+	width: 420px;
+	height: auto;
+	object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+	.vibe-gif {
+		width: 180px;
+	}
+}
+
+@media (max-width: 768px) {
+	.vibe-gif {
+		width: 140px;
+	}
+}
+
+@media (max-width: 480px) {
+	.vibe-gif {
+		width: 100px;
+	}
+}
 
 @media (prefers-reduced-motion: reduce) {
-	.marquee-left .marquee-track, .marquee-right .marquee-track { animation: none; transform: none; }
+	.marquee-left .marquee-track,
+	.marquee-right .marquee-track {
+		animation: none;
+		transform: none;
+	}
 }
