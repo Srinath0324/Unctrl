@@ -1,13 +1,13 @@
 "use client";
 
-import Hero from "@/components/Hero";
-import Story from "@/components/Story";
-import Renders from "@/components/Renders";
-import Usp from "@/components/Usp";
-import Vibe from "@/components/Vibe";
-import ComingSoon from "@/components/ComingSoon";
-import Community from "@/components/Community";
-import Faqs from "@/components/Faqs";
+import Hero from "@/sections/Hero";
+import Story from "@/sections/Story";
+import Renders from "@/sections/Renders";
+import Usp from "@/sections/Usp";
+import Vibe from "@/sections/Vibe";
+import ComingSoon from "@/sections/ComingSoon";
+import Community from "@/sections/Community";
+import Faqs from "@/sections/Faqs";
 import Footer from "@/components/Footer";
 import IntroOverlay from "@/components/IntroOverlay";
 import { useEffect, useState } from "react";
@@ -58,9 +58,6 @@ export default function Home() {
 			<ComingSoon />
 			<Community />
 			<Faqs />
-			<footer>
-				<Footer />
-			</footer>
 		</main>
 	);
 }

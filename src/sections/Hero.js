@@ -13,6 +13,7 @@ export default function Hero() {
 					The World Wants to Own You. We Say <span className="text-white">RAGE</span>
 				</span>
 			</div> */}
+			
 		</section>
 	);
 } 
