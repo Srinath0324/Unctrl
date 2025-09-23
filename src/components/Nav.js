@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { AnimatedLink } from "./AnimatedLink";
 import UnCtrlButton from "./UnCtrlButton";
+import LogoAnimated from "./LogoAnimated";
 
 export default function Nav() {
   return (
@@ -14,13 +14,7 @@ export default function Nav() {
         <div className="flex flex-col items-center md:hidden">
           {/* Logo (bigger on mobile) */}
           <div className="py-2">
-            <Image
-              src="/assets/gifs/logo.gif"
-              alt="UNCTRL"
-              width={160}
-              height={160}
-              priority
-            />
+            <LogoAnimated size={160} />
           </div>
 
           {/* Nav links */}
@@ -47,13 +41,7 @@ export default function Nav() {
         <div className="hidden md:flex items-center justify-between h-[78px]">
           {/* Logo */}
           <div className="flex items-center">
-            <Image
-              src="/assets/gifs/logo.gif"
-              alt="UNCTRL"
-              width={133}
-              height={133}
-              priority
-            />
+          <LogoAnimated baseSize={143} overlaySize={35} overlayOffsetX={-45} overlayOffsetY={0} />
           </div>
 
           {/* Links */}

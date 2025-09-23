@@ -6,7 +6,18 @@ import UnCtrlButton from "@/components/UnCtrlButton";
 export default function Community() {
 	return (
 		<section id="community" className="relative min-h-[100svh] flex items-end justify-center overflow-hidden">
-			<Image src="/assets/gifs/community-bg.gif" alt="community background" fill priority className="object-cover" />
+			<video
+				className="absolute inset-0 w-full h-full object-cover"
+				autoPlay
+				loop
+				muted
+				playsInline
+				preload="auto"
+			>
+				<source src="/assets/videos/community.mp4" type="video/mp4" />
+				{/* Optional fallback text */}
+				Your browser does not support the video tag.
+			</video>
 			<div className="absolute inset-0 pointer-events-none " />
 			<div className="relative z-10 w-full max-w-6xl container-px pb-16 sm:pb-24 flex justify-center">
 				<motion.a

@@ -1,7 +1,6 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import Image from "next/image";
 import { useState } from "react";
 
 const FAQ_ITEMS = [
@@ -16,11 +15,14 @@ export default function Faqs() {
 		<section id="faqs" className="relative bg-white text-black overflow-hidden">
 			{/* Glitch background ONLY behind FAQ content */}
 			<div className="relative min-h-[100svh]">
-				<Image
-					src="/assets/gifs/glitch-bg.gif"
-					alt="glitch"
-					fill
-					className="absolute inset-0 -z-10 object-cover mix-blend-multiply opacity-70"
+				{/* Video background */}
+				<video
+					src="/assets/videos/glitch-bg.mp4"
+					autoPlay
+					loop
+					muted
+					playsInline
+					className="absolute inset-0 -z-10 object-cover w-full h-full mix-blend-multiply opacity-70"
 				/>
 				<div className="absolute inset-0 bg-white/85 -z-10" />
 

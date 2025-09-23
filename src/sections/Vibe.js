@@ -1,37 +1,43 @@
 "use client";
 
-const ANIMATION_DURATION = 30; // doubled (half the speed)
+const ANIMATION_DURATION = 30; // seconds
 
 function Row({ direction }) {
-  const gifs = [
-    "/assets/gifs/video1.gif",
-    "/assets/gifs/video2.gif",
-    "/assets/gifs/video3.gif",
+  const videos = [
+    "/assets/videos/video1.mp4",
+    "/assets/videos/video2.mp4",
+    "/assets/videos/video3.mp4",
   ];
 
   return (
-    <div className="overflow-hidden w-full">
+    <div className="marquee-wrap">
       <div
-        className={`flex ${
+        className={`marquee-track ${
           direction === "left" ? "marquee-left" : "marquee-right"
         }`}
       >
-        {/* Original set */}
-        {gifs.map((src, i) => (
-          <img
+        {/* Track 1 */}
+        {videos.map((src, i) => (
+          <video
             key={i}
             src={src}
-            alt={`Vibe GIF ${i + 1}`}
-            className="vibe-gif w-[350px] h-auto"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="vibe-gif flex-shrink-0"
           />
         ))}
-        {/* Duplicate set for seamless loop */}
-        {gifs.map((src, i) => (
-          <img
+        {/* Track 2 (duplicate for seamless loop) */}
+        {videos.map((src, i) => (
+          <video
             key={`dup-${i}`}
             src={src}
-            alt={`Vibe GIF duplicate ${i + 1}`}
-            className="vibe-gif w-[300px] h-auto"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="vibe-gif flex-shrink-0"
           />
         ))}
       </div>
@@ -50,8 +56,27 @@ export default function Vibe() {
         <Row direction="right" />
       </div>
 
-      {/* Inline CSS for quick testing */}
       <style jsx global>{`
+        .marquee-wrap {
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        .marquee-track {
+          display: flex;
+          gap: 15px;
+          width: max-content;
+        }
+
+        .marquee-left {
+          animation: marquee-left ${ANIMATION_DURATION}s linear infinite;
+        }
+
+        .marquee-right {
+          animation: marquee-right ${ANIMATION_DURATION}s linear infinite;
+        }
+
         @keyframes marquee-left {
           0% {
             transform: translateX(0);
@@ -70,17 +95,36 @@ export default function Vibe() {
           }
         }
 
-        .marquee-left {
-          animation: marquee-left ${ANIMATION_DURATION}s linear infinite;
-        }
-
-        .marquee-right {
-          animation: marquee-right ${ANIMATION_DURATION}s linear infinite;
-        }
-
         .vibe-gif {
-          flex-shrink: 0;
-          margin-right: 7px; /* tiny spacing */
+          width: 420px;
+          height: auto;
+          object-fit: cover;
+        }
+
+        @media (max-width: 1024px) {
+          .vibe-gif {
+            width: 180px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .vibe-gif {
+            width: 140px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .vibe-gif {
+            width: 100px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-left,
+          .marquee-right {
+            animation: none !important;
+            transform: none !important;
+          }
         }
       `}</style>
     </section>
