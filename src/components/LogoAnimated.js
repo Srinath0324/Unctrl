@@ -86,10 +86,10 @@ export default function LogoAnimated({
 	};
 
 	const handleMouseLeave = () => {
-		// Always play on leave as requested. Interrupt any current animation.
+		// Stop current sequence and do not auto-play on leave
 		clearAllTimers();
 		isAnimatingRef.current = false;
-		playHoverCycle();
+		setOverlaySrc(OVERLAY_BIG);
 	};
 
 	const handleClick = (e) => {
@@ -113,13 +113,10 @@ export default function LogoAnimated({
 
 	return (
 		<div
-			className={`relative select-none ${containerClassName}`}
+			className={`relative select-none pointer-events-none ${containerClassName}`}
 			style={containerStyle}
 			aria-label={label}
 			role="img"
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}
-			onClick={handleClick}
 		>
 			{/* Base looping gif layer (fills the base container) */}
 			<Image
@@ -128,18 +125,24 @@ export default function LogoAnimated({
 				fill
 				priority
 				sizes={`(max-width: 768px) ${resolvedBaseSize}px, ${resolvedBaseSize}px`}
-				style={{ objectFit: "contain" }}
+				style={{ objectFit: "contain", pointerEvents: "none" }}
 			/>
 
 			{/* Overlay controllable image/gif with independent sizing/position */}
-			<div className={`absolute ${overlayClassName}`} style={overlayWrapperStyle}>
+			<div
+				className={`absolute pointer-events-auto cursor-pointer ${overlayClassName}`}
+				style={overlayWrapperStyle}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+				onClick={handleClick}
+			>
 				<Image
 					src={overlaySrc}
 					alt="UNCTRL overlay"
 					fill
 					priority
 					sizes={`${resolvedOverlaySize}px`}
-					style={{ objectFit: "contain" }}
+					style={{ objectFit: "contain", pointerEvents: "none" }}
 				/>
 			</div>
 		</div>

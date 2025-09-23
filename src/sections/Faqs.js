@@ -1,7 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const FAQ_ITEMS = [
 	{ q: "What is UNCTRL?", a: "UNCTRL is a next-gen modular controller designed for precision and creativity in games and beyond." },
@@ -11,21 +11,62 @@ const FAQ_ITEMS = [
 ];
 
 export default function Faqs() {
+	const videoRef = useRef(null);
+
+	useEffect(() => {
+		const video = videoRef.current;
+		if (!video) return;
+
+		// Ensure autoplay/loop across browsers
+		const ensurePlay = async () => {
+			try {
+				video.muted = true;
+				await video.play();
+			} catch (_) {
+				// Autoplay may be blocked; try again when user interacts
+				const onUserInteract = async () => {
+					try { await video.play(); } catch {}
+					window.removeEventListener("pointerdown", onUserInteract);
+				};
+				window.addEventListener("pointerdown", onUserInteract, { once: true });
+			}
+		};
+
+		const onEnded = () => {
+			video.currentTime = 0;
+			video.play().catch(() => {});
+		};
+
+		video.addEventListener("ended", onEnded);
+		if (video.readyState >= 2) {
+			ensurePlay();
+		} else {
+			video.addEventListener("loadeddata", ensurePlay, { once: true });
+		}
+
+		return () => {
+			video.removeEventListener("ended", onEnded);
+		};
+	}, []);
+
 	return (
-		<section id="faqs" className="relative bg-white text-black overflow-hidden">
+		<section id="faqs" className="relative bg-transparent text-white overflow-hidden">
 			{/* Glitch background ONLY behind FAQ content */}
 			<div className="relative min-h-[100svh]">
 				{/* Video background */}
 				<video
+					ref={videoRef}
 					src="/assets/videos/glitch-bg.mp4"
 					autoPlay
 					loop
 					muted
 					playsInline
-					className="absolute inset-0 -z-10 object-cover w-full h-full mix-blend-multiply opacity-70"
+					preload="auto"
+					className="absolute inset-0 -z-20 w-full h-full object-cover"
+					aria-hidden
 				/>
-				<div className="absolute inset-0 bg-white/85 -z-10" />
 
+				{/* Content */}
 				<div className="relative z-10 max-w-5xl mx-auto container-px py-16 sm:py-24">
 					<h2 className="h2 text-center mb-10">FAQs</h2>
 					<div className="space-y-4">

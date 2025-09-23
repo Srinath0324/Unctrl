@@ -8,7 +8,7 @@ export default function Footer() {
 					<div className="flex items-center gap-8">
 						{/* Logo image */}
 						<img 
-							src="/images/group 1 1.png" 
+							src="/images/Group 1 1.png" 
 							alt="UNCTRL Logo" 
 							className="w-150 h-45"
 						/>
