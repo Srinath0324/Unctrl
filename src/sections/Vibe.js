@@ -1,128 +1,151 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const VIDEO_SOURCES = [
-  "/assets/videos/video1.mp4",
-  "/assets/videos/video2.mp4",
-  "/assets/videos/video3.mp4",
-];
+const ANIMATION_DURATION = 30; // seconds
 
-const SCROLL_SPEED_PX_PER_SEC = 60; // tune for desired speed
-const REPEATS = 4; // render the list multiple times for robust seamless looping
+function Row({ direction = "left" }) {
+  const gifs = [
+    "/assets/gifs/video1.gif",
+    "/assets/gifs/video2.gif",
+    "/assets/gifs/video3.gif",
+  ];
 
-function MarqueeRow({ direction }) {
-  const trackRef = useRef(null);
-  const [isReducedMotion, setIsReducedMotion] = useState(false);
-
-  // Duplicate the list so that we can create a seamless loop
-  const items = useMemo(
-    () => Array.from({ length: REPEATS }).flatMap(() => VIDEO_SOURCES),
-    []
-  );
+  const groupRef = useRef(null); // reference to the first group (one set)
+  const innerRef = useRef(null); // the flex wrapper that contains group1 + group2
+  const [groupWidth, setGroupWidth] = useState(0);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setIsReducedMotion(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener?.("change", update);
-    return () => mediaQuery.removeEventListener?.("change", update);
-  }, []);
+    if (!groupRef.current) return;
 
-  useEffect(() => {
-    if (isReducedMotion) return; // respect user preference
-    const track = trackRef.current;
-    if (!track) return;
-
-    let animationFrameId = 0;
-    let lastTimestamp = 0;
-    let offset = 0; // current translateX offset in px
-    let initialized = false; // ensure we set a proper starting offset once widths are known
-
-    const getSetWidth = () => {
-      const totalWidth = track.scrollWidth;
-      // We rendered REPEATS sets; one set width is total / REPEATS
-      return totalWidth > 0 ? totalWidth / REPEATS : 0;
-    };
-
-    let setWidth = getSetWidth();
-
-    const onResize = () => {
-      setWidth = getSetWidth();
-      // Keep offset within valid range after resize
-      if (direction === "right") {
-        if (offset > 0) offset -= setWidth * Math.ceil(offset / setWidth);
-        if (offset < -setWidth) offset += setWidth * Math.ceil(Math.abs(offset) / setWidth);
-      } else {
-        if (offset < -setWidth) offset += setWidth * Math.ceil(Math.abs(offset) / setWidth);
-        if (offset > 0) offset -= setWidth * Math.ceil(offset / setWidth);
+    // Watch for size changes (handles loading images / responsive)
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const w = Math.round(entry.contentRect.width);
+        setGroupWidth(w);
       }
-    };
+    });
 
-    const resizeObserver = new ResizeObserver(onResize);
-    resizeObserver.observe(track);
+    ro.observe(groupRef.current);
+    return () => ro.disconnect();
+  }, [groupRef]);
 
-    const step = (timestamp) => {
-      if (!lastTimestamp) lastTimestamp = timestamp;
-      const deltaMs = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
-
-      // If widths are not known yet (e.g. before videos paint), try again next frame
-      if (setWidth <= 0) {
-        animationFrameId = requestAnimationFrame(step);
-        return;
-      }
-
-      if (!initialized) {
-        // For rightward motion, start at -setWidth so content fills from the start with no blank
-        offset = direction === "right" ? -setWidth : 0;
-        initialized = true;
-      }
-
-      const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
-
-      if (direction === "left") {
-        offset -= deltaPx;
-        // Wrap when we have scrolled left by at least one set width
-        if (offset <= -setWidth) {
-          offset += setWidth;
-        }
-      } else {
-        offset += deltaPx;
-        // Keep offset within [-setWidth, 0) to avoid revealing blank space on the left
-        if (offset >= 0) {
-          offset -= setWidth;
-        }
-      }
-
-      track.style.transform = `translate3d(${offset}px, 0, 0)`;
-      animationFrameId = requestAnimationFrame(step);
-    };
-
-    animationFrameId = requestAnimationFrame(step);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
-      track.style.transform = "";
-    };
-  }, [direction, isReducedMotion]);
+  // Inline CSS custom properties set here: --marquee-distance (px) and --marquee-duration (s)
+  const cssVars = {
+    ["--marquee-distance"]: `${groupWidth}px`,
+    ["--marquee-duration"]: `${ANIMATION_DURATION}s`,
+  };
 
   return (
-    <div className="marquee-wrap">
-      <div ref={trackRef} className="marquee-track">
-        {items.map((src, i) => (
-          <video
-            key={i}
-            src={src}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="vibe-gif flex-shrink-0"
-          />
-        ))}
+    <div className="overflow-hidden w-full">
+      <div
+        className={`marquee ${direction === "left" ? "marquee-left" : "marquee-right"}`}
+        style={cssVars}
+      >
+        {/* inner contains two identical groups side-by-side */}
+        <div className="marquee__inner" ref={innerRef}>
+          <div className="marquee__group" ref={groupRef}>
+            {gifs.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`Vibe GIF ${i + 1}`}
+                className="vibe-gif w-[350px] h-auto"
+                draggable={false}
+              />
+            ))}
+          </div>
+
+          {/* duplicate group for seamless looping */}
+          <div className="marquee__group" aria-hidden="true">
+            {gifs.map((src, i) => (
+              <img
+                key={`dup-${i}`}
+                src={src}
+                alt={`Vibe GIF duplicate ${i + 1}`}
+                className="vibe-gif w-[350px] h-auto"
+                draggable={false}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
+      <style jsx global>{`
+        /* container */
+        .marquee {
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        /* the moving element: it contains group + duplicate group */
+        .marquee__inner {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          will-change: transform;
+        }
+
+        /* each group (one set of gifs) is a flex row */
+        .marquee__group {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          /* keep it as natural width (auto) so ResizeObserver can measure it */
+        }
+
+        .vibe-gif {
+          flex-shrink: 0;
+          margin-right: 7px;
+          user-select: none;
+          -webkit-user-drag: none;
+        }
+
+        /* default transforms to avoid initial flicker:
+           - left row starts at 0 (so it can animate to -distance)
+           - right row starts at -distance (so it can animate to 0)
+        */
+        .marquee-left .marquee__inner {
+          transform: translateX(0);
+        }
+        .marquee-right .marquee__inner {
+          transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+        }
+
+        /* Keyframes use the measured pixel distance (CSS var --marquee-distance) */
+        @keyframes scroll-left {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+          }
+        }
+
+        @keyframes scroll-right {
+          from {
+            transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+
+        /* apply animations; duration comes from --marquee-duration */
+        .marquee-left .marquee__inner {
+          animation: scroll-left var(--marquee-duration, ${ANIMATION_DURATION}s) linear infinite;
+        }
+
+        .marquee-right .marquee__inner {
+          animation: scroll-right var(--marquee-duration, ${ANIMATION_DURATION}s) linear infinite;
+        }
+
+        /* small accessibility / performance helpers */
+        .marquee__group img {
+          display: block;
+        }
+      `}</style>
     </div>
   );
 }
@@ -134,48 +157,11 @@ export default function Vibe() {
       className="relative min-h-[80vh] bg-black flex flex-col justify-center items-center pt-19 pb-5"
     >
       <div className="w-full max-w-[1600px] px-6 space-y-2">
-        <MarqueeRow direction="left" />
-        <MarqueeRow direction="right" />
+        {/* top: move right -> left */}
+        <Row direction="left" />
+        {/* bottom: move left -> right */}
+        <Row direction="right" />
       </div>
-
-      <style jsx global>{`
-        .marquee-wrap {
-          position: relative;
-          overflow: hidden;
-          width: 100%;
-        }
-
-        .marquee-track {
-          display: flex;
-          gap: 15px;
-          width: max-content;
-          will-change: transform;
-        }
-
-        .vibe-gif {
-          width: 420px;
-          height: auto;
-          object-fit: cover;
-        }
-
-        @media (max-width: 1024px) {
-          .vibe-gif {
-            width: 180px;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .vibe-gif {
-            width: 140px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .vibe-gif {
-            width: 100px;
-          }
-        }
-      `}</style>
     </section>
   );
 }

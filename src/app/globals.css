@@ -10,6 +10,10 @@
 	--brand-purple: #9b5de5;
 }
 
+body {
+  cursor: url('/images/imgi_13_default.png');
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
