@@ -1,32 +1,33 @@
 export default function Footer() {
 	return (
 		<footer className="bg-black text-white">
-			<div className="max-w-7xl mx-auto px-8 py-14">
+			<div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-14">
 				{/* Main content area */}
-				<div className="flex justify-between items-start mb-14">
+				<div className="flex justify-between items-start mb-8 sm:mb-14">
 					{/* Logo section */}
-					<div className="flex items-center gap-8">
+					<div className="flex items-bet">
 						{/* Logo image */}
 						<img 
 							src="/images/Group 1 1.png" 
 							alt="UNCTRL Logo" 
-							className="w-150 h-45"
+							className="w-70  sm:w-80 lg:w-150 lg:h-45 rotate-270 sm:rotate-0 translate-y-30 sm:translate-y-0
+							translate-x-[-90px] sm:translate-x-0
+							"
 						/>
-						{/* Brand name */}
-						{/* <h1 className="text-8xl font-black tracking-[0.15em] text-white">
-							UNCTRL
-						</h1> */}
 					</div>
 
-					{/* Right side navigation */}
-					<div className="flex gap-24 text-xl">
-						<div className="space-y-4">
+					{/* Navigation sections */}
+					<div className="flex flex-col sm:flex-row gap-8 sm:gap-12 lg:gap-24 text-lg sm:text-xl">
+						{/* First column */}
+						<div className="space-y-3 sm:space-y-4 text-right sm:text-left">
 							<a href="#" className="block hover:text-orange-500 transition-colors">Instagram</a>
 							<a href="#" className="block hover:text-orange-500 transition-colors">Reddit</a>
 							<a href="#" className="block hover:text-orange-500 transition-colors">Discord</a>
 							<a href="#" className="block hover:text-orange-500 transition-colors">Blog</a>
 						</div>
-						<div className="space-y-4">
+						
+						{/* Second column */}
+						<div className="space-y-3 sm:space-y-4 text-right sm:text-left">
 							<a href="#" className="block hover:text-orange-500 transition-colors">Sitemap</a>
 							<a href="#" className="block hover:text-orange-500 transition-colors">Downloads</a>
 							<a href="#" className="block hover:text-orange-500 transition-colors">Join the community</a>
@@ -35,8 +36,8 @@ export default function Footer() {
 				</div>
 
 				{/* Bottom navigation */}
-				<div className="border-t border-gray-800 pt-8">
-					<div className="flex gap-12 text-base text-gray-400">
+				<div className="border-t border-gray-800 pt-6 sm:pt-8">
+					<div className="flex flex-col sm:flex-row gap-4 sm:gap-12 text-sm sm:text-base text-gray-400 text-center sm:text-left">
 						<a href="#" className="hover:text-white transition-colors">Login</a>
 						<a href="#" className="hover:text-white transition-colors">FAQs</a>
 						<a href="#" className="hover:text-white transition-colors">Support</a>

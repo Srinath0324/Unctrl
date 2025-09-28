@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const ANIMATION_DURATION = 30; // seconds
+import CoinMan from "@/components/CoinMan";
 
 function Row({ direction = "left" }) {
   const gifs = [
@@ -11,59 +10,44 @@ function Row({ direction = "left" }) {
     "/assets/gifs/video3.gif",
   ];
 
-  const groupRef = useRef(null); // reference to the first group (one set)
-  const innerRef = useRef(null); // the flex wrapper that contains group1 + group2
-  const [groupWidth, setGroupWidth] = useState(0);
-
-  useEffect(() => {
-    if (!groupRef.current) return;
-
-    // Watch for size changes (handles loading images / responsive)
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const w = Math.round(entry.contentRect.width);
-        setGroupWidth(w);
-      }
-    });
-
-    ro.observe(groupRef.current);
-    return () => ro.disconnect();
-  }, [groupRef]);
-
-  // Inline CSS custom properties set here: --marquee-distance (px) and --marquee-duration (s)
-  const cssVars = {
-    ["--marquee-distance"]: `${groupWidth}px`,
-    ["--marquee-duration"]: `${ANIMATION_DURATION}s`,
-  };
-
   return (
-    <div className="overflow-hidden w-full">
-      <div
-        className={`marquee ${direction === "left" ? "marquee-left" : "marquee-right"}`}
-        style={cssVars}
-      >
-        {/* inner contains two identical groups side-by-side */}
-        <div className="marquee__inner" ref={innerRef}>
-          <div className="marquee__group" ref={groupRef}>
+    <div className="overflow-hidden w-full relative z-10">
+      <div className={`marquee ${direction === "left" ? "marquee-left" : "marquee-right"}`}>
+        <div className="marquee__inner">
+          {/* First set of gifs */}
+          <div className="marquee__group">
             {gifs.map((src, i) => (
               <img
                 key={i}
                 src={src}
                 alt={`Vibe GIF ${i + 1}`}
-                className="vibe-gif w-[350px] h-auto"
+                className="vibe-gif rounded-md"
                 draggable={false}
               />
             ))}
           </div>
 
-          {/* duplicate group for seamless looping */}
-          <div className="marquee__group" aria-hidden="true">
+          {/* Duplicate set for seamless loop */}
+          <div className="marquee__group">
             {gifs.map((src, i) => (
               <img
                 key={`dup-${i}`}
                 src={src}
                 alt={`Vibe GIF duplicate ${i + 1}`}
-                className="vibe-gif w-[350px] h-auto"
+                className="vibe-gif rounded-md"
+                draggable={false}
+              />
+            ))}
+          </div>
+
+          {/* Third set for extra smooth transition */}
+          <div className="marquee__group">
+            {gifs.map((src, i) => (
+              <img
+                key={`dup2-${i}`}
+                src={src}
+                alt={`Vibe GIF duplicate 2 ${i + 1}`}
+                className="vibe-gif rounded-md"
                 draggable={false}
               />
             ))}
@@ -72,78 +56,87 @@ function Row({ direction = "left" }) {
       </div>
 
       <style jsx global>{`
-        /* container */
         .marquee {
           position: relative;
           overflow: hidden;
           width: 100%;
         }
 
-        /* the moving element: it contains group + duplicate group */
         .marquee__inner {
           display: flex;
           align-items: center;
-          gap: 7px;
+          gap: 1rem;
           will-change: transform;
+          width: fit-content;
         }
 
-        /* each group (one set of gifs) is a flex row */
         .marquee__group {
           display: flex;
           align-items: center;
-          gap: 7px;
-          /* keep it as natural width (auto) so ResizeObserver can measure it */
+          gap: 1rem;
+          flex-shrink: 0;
         }
 
         .vibe-gif {
           flex-shrink: 0;
-          margin-right: 7px;
           user-select: none;
           -webkit-user-drag: none;
+          height: auto;
+          object-fit: cover;
+          /* Responsive sizing - bigger on smaller devices */
+          width: 350px;
         }
 
-        /* default transforms to avoid initial flicker:
-           - left row starts at 0 (so it can animate to -distance)
-           - right row starts at -distance (so it can animate to 0)
-        */
-        .marquee-left .marquee__inner {
-          transform: translateX(0);
-        }
-        .marquee-right .marquee__inner {
-          transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+        /* Responsive breakpoints */
+        @media (min-width: 480px) {
+          .vibe-gif {
+            width: 400px;
+          }
         }
 
-        /* Keyframes use the measured pixel distance (CSS var --marquee-distance) */
+        @media (min-width: 640px) {
+          .vibe-gif {
+            width: 350px;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .vibe-gif {
+            width: 350px;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .vibe-gif {
+            width: 380px;
+          }
+        }
+
+        /* Smooth infinite scroll animations */
         @keyframes scroll-left {
-          from {
+          0% {
             transform: translateX(0);
           }
-          to {
-            transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+          100% {
+            transform: translateX(calc(-100% / 3));
           }
         }
 
         @keyframes scroll-right {
-          from {
-            transform: translateX(calc(-1 * var(--marquee-distance, 0px)));
+          0% {
+            transform: translateX(calc(-100% / 3));
           }
-          to {
+          100% {
             transform: translateX(0);
           }
         }
 
-        /* apply animations; duration comes from --marquee-duration */
         .marquee-left .marquee__inner {
-          animation: scroll-left var(--marquee-duration, ${ANIMATION_DURATION}s) linear infinite;
+          animation: scroll-left 20s linear infinite;
         }
 
         .marquee-right .marquee__inner {
-          animation: scroll-right var(--marquee-duration, ${ANIMATION_DURATION}s) linear infinite;
-        }
-
-        /* small accessibility / performance helpers */
-        .marquee__group img {
-          display: block;
+          animation: scroll-right 20s linear infinite;
         }
       `}</style>
     </div>
@@ -154,11 +147,17 @@ export default function Vibe() {
   return (
     <section
       id="vibe"
-      className="relative min-h-[80vh] bg-black flex flex-col justify-center items-center pt-19 pb-5"
+      className="relative min-h-[80vh] bg-black flex flex-col justify-center items-center pt-20 pb-5"
     >
-      <div className="w-full max-w-[1600px] px-6 space-y-2">
+      <div className="w-full max-w-[1600px] px-4 md:px-6 space-y-3 md:space-y-6 relative">
         {/* top: move right -> left */}
-        <Row direction="left" />
+        <div className="relative">
+          {/* CoinMan positioned so 50% is above the top scroll */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 top-0 z-0">
+            <CoinMan />
+          </div>
+          <Row direction="left" />
+        </div>
         {/* bottom: move left -> right */}
         <Row direction="right" />
       </div>
