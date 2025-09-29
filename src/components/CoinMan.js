@@ -26,7 +26,7 @@ const CoinMan = () => {
       style={{ width: "50vw", height: "50vh" }}
     >
       {/* CoinMan image visually behind everything */}
-      <div className="absolute inset-0 flex items-center justify-center z-1 pointer-events-none">
+      <div className="absolute inset-0 flex items-center justify-center -z-10 pointer-events-none">
         <Image
           src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
           alt="CoinMan"
