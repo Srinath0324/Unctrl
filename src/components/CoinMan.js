@@ -7,7 +7,6 @@ const CoinMan = () => {
   const [showGlitch, setShowGlitch] = useState(false);
   const intervalRef = useRef(null);
 
-  // Start fast glitch
   const startFlipping = () => {
     if (intervalRef.current) return;
     intervalRef.current = setInterval(() => {
@@ -15,7 +14,6 @@ const CoinMan = () => {
     }, 50); // super fast
   };
 
-  // Stop glitch
   const stopFlipping = () => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
@@ -24,24 +22,26 @@ const CoinMan = () => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center z-1000"
-      style={{
-        width: "50vw",      // BIG hover width
-        height: "50vh",     // BIG hover height
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-      }}
-      onMouseEnter={startFlipping}
-      onMouseLeave={stopFlipping}
+      className="relative flex items-center justify-center"
+      style={{ width: "50vw", height: "50vh" }}
     >
-      <Image
-        src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
-        alt="CoinMan"
-        width={300}
-        height={300}
-      />     
+      {/* CoinMan image visually behind everything */}
+      <div className="absolute inset-0 flex items-center justify-center z-1 pointer-events-none">
+        <Image
+          src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
+          alt="CoinMan"
+          width={300}
+          height={300}
+          draggable={false}
+        />
+      </div>
+
+      {/* Hover layer above marquee but invisible */}
+      <div
+        className="absolute inset-0 cursor-pointer z-100"
+        onMouseEnter={startFlipping}
+        onMouseLeave={stopFlipping}
+      />
     </div>
   );
 };
