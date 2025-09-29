@@ -41,7 +41,7 @@ export const AnimatedLink = ({ value }) => {
 
   return (
     <motion.span
-      className="relative cursor-pointer"
+      className="relative cursor-pointer font-semibold"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       animate={{

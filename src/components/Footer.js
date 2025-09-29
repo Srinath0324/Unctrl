@@ -37,7 +37,7 @@ export default function Footer() {
 
 				{/* Bottom navigation */}
 				<div className="border-t border-gray-800 pt-6 sm:pt-8">
-					<div className="flex flex-col sm:flex-row gap-4 sm:gap-12 text-sm sm:text-base text-gray-400 text-center sm:text-left">
+					<div className="flex flex-row sm:gap-12 text-sm sm:text-base text-gray-400 text-center sm:text-left mb-15 sm:m-0 gap-4 sm:gap-8 lg:gap-12 justify-center sm:justify-start">
 						<a href="#" className="hover:text-white transition-colors">Login</a>
 						<a href="#" className="hover:text-white transition-colors">FAQs</a>
 						<a href="#" className="hover:text-white transition-colors">Support</a>

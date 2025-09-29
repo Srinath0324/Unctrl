@@ -1,53 +1,39 @@
-"use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
 
 export default function Hero() {
-	const [videoSupported, setVideoSupported] = useState(true);
+  return (
+    <section
+      id="home"
+      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-black"
+    >
+      {/* Background Video with fallback */}
+      <video
+        className="absolute inset-0 w-full h-full "
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+      >
+        {/* Modern browsers pick WebM first */}
+        <source src="/assets/videos/rage.webm" type="video/webm" />
+        {/* Universal fallback */}
+        <source src="/assets/videos/rage.mp4" type="video/mp4" />
+        {/* Final fallback image */}
+        <Image
+          src="/images/rage-apng.png"
+          alt="rage background"
+          fill
+          priority
+          className="object-cover"
+        />
+      </video> 
 
-	useEffect(() => {
-		// Check if browser supports webm video
-		const video = document.createElement("video");
-		if (!video.canPlayType("video/webm")) {
-			setVideoSupported(false);
-		}
-	}, []);
-
-	return (
-		<section
-			id="home"
-			className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-black"
-		>
-			{/* Background Media */}
-			{videoSupported ? (
-				<video
-					className="absolute inset-0 w-full h-full object-contain"
-					autoPlay
-					loop
-					muted
-					playsInline
-					preload="auto"
-				>
-					<source src="/assets/videos/rage.webm" type="video/webm" />
-				</video>
-			) : (
-				<Image
-					src="/images/rage-apng.png"
-					alt="rage background"
-					fill
-					priority
-					className="object-contain"
-				/>
-			)}
-
-			{/* Overlay */}
-			<div className="absolute inset-0 pointer-events-none" />
-
-			{/* Foreground content */}
-			<div className="relative z-10 w-full h-full flex items-center justify-center">
-				{/* Add your hero text / buttons here */}
-			</div>
-		</section>
-	);
+      {/* Foreground content */}
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        {/* Add hero text / buttons here */}
+      </div>
+    </section>
+  );
 }

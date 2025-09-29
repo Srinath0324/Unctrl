@@ -6,7 +6,7 @@ import LogoAnimated from "./LogoAnimated";
 
 export default function DesktopNav() {
   return (
-    <div className="hidden md:block w-full bg-black">
+    <div className="hidden md:block w-screen bg-black">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-[78px] px-6">
         <LogoAnimated baseSize={140} overlaySize={40} overlayOffsetX={-45} overlayOffsetY={0} />
         <nav className="flex items-center gap-10 text-white">
@@ -15,7 +15,7 @@ export default function DesktopNav() {
               <AnimatedLink value={item} />
             </Link>
           ))}
-          <UnCtrlButton>Pre-order</UnCtrlButton>
+          <UnCtrlButton>Order Now</UnCtrlButton>
         </nav>
       </div>
     </div>

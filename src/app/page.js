@@ -13,51 +13,57 @@ import IntroOverlay from "@/components/IntroOverlay";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-	const [showIntro, setShowIntro] = useState(false);
-	const [isClient, setIsClient] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-	useEffect(() => {
-		// Ensure we're on the client side
-		setIsClient(true);
-		
-		// Check if user has already seen the intro
-		const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
-		if (!hasSeenIntro) {
-			setShowIntro(true);
-		}
-	}, []);
+  // 🔹 TOGGLE: true = show intro EVERY reload, false = show ONLY first visit
+  const PLAY_INTRO_EVERY_TIME = false;
 
-	const handleIntroFinished = () => {
-		// Mark intro as seen
-		sessionStorage.setItem("hasSeenIntro", "1");
-		setShowIntro(false);
-		
-		// Smooth scroll to hero section
-		requestAnimationFrame(() => {
-			const hero = document.getElementById("home");
-			if (hero) {
-				hero.scrollIntoView({ behavior: "smooth" });
-			}
-		});
-	};
+  useEffect(() => {
+    setIsClient(true);
 
-	return (
-		<main className="w-full overflow-x-hidden">
-			{/* Only show intro overlay on client side and if user hasn't seen it */}
-			{isClient && showIntro && (
-				<IntroOverlay
-					videoSrc="/assets/videos/intro.mp4"
-					onFinished={handleIntroFinished}
-				/>
-			)}
-			<Hero />
-			<Story />
-			<Renders />
-			<Usp />
-			<Vibe />
-			<ComingSoon />
-			<Community />
-			<Faqs />
-		</main>
-	);
+    if (PLAY_INTRO_EVERY_TIME) {
+      setShowIntro(true);
+    } else {
+      // Only show intro if user hasn't seen it yet
+      const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
+      if (!hasSeenIntro) {
+        setShowIntro(true);
+      }
+    }
+  }, []);
+
+  const handleIntroFinished = () => {
+    if (!PLAY_INTRO_EVERY_TIME) {
+      // Only mark as seen if intro is supposed to show once
+      sessionStorage.setItem("hasSeenIntro", "1");
+    }
+
+    setShowIntro(false);
+
+    // Smooth scroll to hero section
+    const hero = document.getElementById("home");
+    if (hero) {
+      hero.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <main className="w-full overflow-x-hidden">
+      {isClient && showIntro && (
+        <IntroOverlay
+          onFinished={handleIntroFinished}
+        />
+      )}
+      <Hero />
+      <Story />
+      <Renders />
+      <Usp />
+      <Vibe />
+      <ComingSoon />
+      <Community />
+      <Faqs />
+      
+    </main>
+  );
 }

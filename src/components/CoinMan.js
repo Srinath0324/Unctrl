@@ -24,10 +24,10 @@ const CoinMan = () => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center"
+      className="flex flex-col items-center justify-center z-1000"
       style={{
-        width: 400,      // BIG hover width
-        height: 400,     // BIG hover height
+        width: "50vw",      // BIG hover width
+        height: "50vh",     // BIG hover height
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -39,8 +39,8 @@ const CoinMan = () => {
       <Image
         src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
         alt="CoinMan"
-        width={500}
-        height={500}
+        width={300}
+        height={300}
       />     
     </div>
   );
