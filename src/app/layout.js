@@ -17,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body suppressHydrationWarning className={`${chakra.variable} antialiased bg-[#020104] text-white`}>
+			<body suppressHydrationWarning className={`${chakra.variable} antialiased bg-black text-white`}>
 				<ScrollEffects>
 					<SiteHeader />
 					{children}

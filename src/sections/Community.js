@@ -6,7 +6,7 @@ import UnCtrlButton from "@/components/UnCtrlButton";
 
 export default function Community() {
   const sectionRef = useRef(null);
-  const y = useMotionValue(200); // Start from below screen
+  const y = useMotionValue(200); 
   const scale = useMotionValue(1);
 
   const springY = useSpring(y, { stiffness: 150, damping: 20, mass: 1 });
@@ -79,10 +79,13 @@ export default function Community() {
           Your browser does not support the video tag.
         </video>
 
-        {/* Pixels centered horizontally at the bottom of section */}
+        {/* Pixels centered horizontally at the bottom */}
         <div
           className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-end"
-          style={{ gap: "180px" /* approximate button width */ }}
+           style={{
+    gap: "180px",
+    transform: "translateX(-75%)", // slightly more to the left
+  }}
         >
           <Image
             src="/images/yellowPixel.png"
@@ -90,13 +93,7 @@ export default function Community() {
             height={200}
             alt="yellow pixel"
           />
-          <Image
-            src="/images/violetPixel.png"
-            width={200}
-            height={200}
-            alt="violet pixel"
-            className="rotate-90"
-          />
+          {/* Violet pixel REMOVED, because it falls in dynamically */}
         </div>
 
         <div className="absolute inset-0 pointer-events-none" />
@@ -104,7 +101,7 @@ export default function Community() {
 
       {/* Fixed button */}
       <motion.div
-        className="fixed bottom-16 sm:bottom-24 left-1/2 transform -translate-x-1/2 z-50"
+        className="fixed bottom-44 sm:bottom-24 left-1/2 transform -translate-x-1/2 z-50"
         style={{
           y: springY,
           scale: springScale,

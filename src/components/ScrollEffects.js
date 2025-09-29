@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 
 export default function ScrollEffects({ children }) {
@@ -33,12 +32,11 @@ export default function ScrollEffects({ children }) {
       isScrollingRef.current = true;
       sections[next].scrollIntoView({ behavior: "smooth", block: "start" });
 
-      // Wait until scroll settles
       const checkScrollEnd = () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
           isScrollingRef.current = false;
-        }, 100); // after scrolling stops for 100ms
+        }, 100);
       };
       window.addEventListener("scroll", checkScrollEnd, { once: true });
       e.preventDefault();
