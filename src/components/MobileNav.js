@@ -56,7 +56,7 @@ export default function MobileNav() {
           {/* Content row */}
           <div className="relative h-full flex items-center justify-between px-6">
             {/* Hamburger */}
-            <button onClick={toggleMenu} className="relative p-2 bg-transparent">
+            <button onClick={toggleMenu} className="relative p-2 bg-transparent boaring-hover">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 text-orange-500 relative z-10"

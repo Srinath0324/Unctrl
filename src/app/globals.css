@@ -170,21 +170,34 @@ main > footer.is-in-view {
 }
 
 /* Default cursor everywhere */
-html,
-body {
+html, body {
   cursor: url('/images/Cursor_norm.png'), auto;
 }
 
-/* Replace global pointer with cursor_boring */
+/* Generic pointer hover cursor */
 a:hover,
 button:hover,
-.boaring-hover,
-.clickable:hover {
+.clickable:hover,
+.boaring-hover:hover {
   cursor: url('/images/cursor_boring.png'), pointer;
 }
 
-/* CoinMan + UnCtrlButton use their special hover cursor */
+/* Special hover for CoinMan and UnCtrlButton */
 .coinman-hover:hover,
 .unctrlbutton-hover:hover {
   cursor: url('/images/Cursor_1011.png'), pointer;
+}
+
+/* Overlay elements inherit default cursor */
+.motion-overlay,
+#mobile-nav-overlay,
+.motion-overlay *,
+#mobile-nav-overlay * {
+  cursor: url('/images/Cursor_norm.png'), auto !important;
+}
+
+/* Ensure boaring-hover works on any element including buttons */
+.boaring-hover,
+.boaring-hover * {
+  cursor: url('/images/cursor_boring.png'), pointer !important;
 }

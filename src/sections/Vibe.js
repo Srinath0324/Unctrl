@@ -1,56 +1,14 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import Image from "next/image";
+import CoinMan from "../components/CoinMan";
 
-const CoinMan = () => {
-  const [showGlitch, setShowGlitch] = useState(false);
-  const intervalRef = useRef(null);
-
-  const startFlipping = () => {
-    if (intervalRef.current) return;
-    intervalRef.current = setInterval(() => {
-      setShowGlitch((prev) => !prev);
-    }, 50); // fast flicker
-  };
-
-  const stopFlipping = () => {
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-    setShowGlitch(false);
-  };
-
-  return (
-    <div
-      className="relative flex items-center justify-center"
-      style={{ width: "50vw", height: "50vh" }}
-    >
-      {/* CoinMan image visually behind marquee */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <Image
-          src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
-          alt="CoinMan"
-          width={300}
-          height={300}
-          draggable={false}
-        />
-      </div>
-
-      {/* Invisible hover layer on top */}
-      <div
-        className="absolute inset-0 coinman-hover z-50"
-        onMouseEnter={startFlipping}
-        onMouseLeave={stopFlipping}
-      />
-    </div>
-  );
-};
 
 const Row = ({ direction = "left" }) => {
-  const gifs = [
-    "/assets/gifs/video1.gif",
-    "/assets/gifs/video2.gif",
-    "/assets/gifs/video3.gif",
+  const videos = [
+    "/assets/videos/video1.mp4",
+    "/assets/videos/video2.mp4",
+    "/assets/videos/video3.mp4",
   ];
 
   return (
@@ -65,12 +23,15 @@ const Row = ({ direction = "left" }) => {
             .fill(0)
             .map((_, setIndex) => (
               <div className="marquee__group" key={setIndex}>
-                {gifs.map((src, i) => (
-                  <img
+                {videos.map((src, i) => (
+                  <video
                     key={i}
                     src={src}
-                    alt={`Vibe GIF ${i + 1}`}
-                    className="vibe-gif rounded-md"
+                    className="vibe-video rounded-md"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                     draggable={false}
                   />
                 ))}
@@ -101,7 +62,7 @@ const Row = ({ direction = "left" }) => {
           flex-shrink: 0;
         }
 
-        .vibe-gif {
+        .vibe-video {
           flex-shrink: 0;
           user-select: none;
           -webkit-user-drag: none;
@@ -111,25 +72,25 @@ const Row = ({ direction = "left" }) => {
         }
 
         @media (min-width: 480px) {
-          .vibe-gif {
+          .vibe-video {
             width: 400px;
           }
         }
 
         @media (min-width: 640px) {
-          .vibe-gif {
+          .vibe-video {
             width: 350px;
           }
         }
 
         @media (min-width: 768px) {
-          .vibe-gif {
+          .vibe-video {
             width: 350px;
           }
         }
 
         @media (min-width: 1024px) {
-          .vibe-gif {
+          .vibe-video {
             width: 380px;
           }
         }
@@ -163,6 +124,7 @@ const Row = ({ direction = "left" }) => {
     </div>
   );
 };
+
 
 export default function Vibe() {
   return (

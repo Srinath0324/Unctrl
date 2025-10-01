@@ -7,8 +7,7 @@ import Usp from "@/sections/Usp";
 import Vibe from "@/sections/Vibe";
 import ComingSoon from "@/sections/ComingSoon";
 import Community from "@/sections/Community";
-import Faqs from "@/sections/Faqs";
-import Footer from "@/components/Footer";
+import Faqs from "@/sections/Faqs"; 
 import IntroOverlay from "@/components/IntroOverlay";
 import { useEffect, useState } from "react";
 
