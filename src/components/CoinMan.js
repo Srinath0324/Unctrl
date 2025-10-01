@@ -4,7 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 
 const CoinMan = () => {
   const [showGlitch, setShowGlitch] = useState(false);
+  const [isFlickering, setIsFlickering] = useState(false);
   const intervalRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Preload images
   useEffect(() => {
@@ -15,60 +17,87 @@ const CoinMan = () => {
     });
   }, []);
 
-  const startFlipping = () => {
-    if (intervalRef.current) return;
-    intervalRef.current = setInterval(() => {
-      setShowGlitch((prev) => !prev);
-    }, 50);
+  // Flicker function
+  const startFlicker = () => {
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setShowGlitch((prev) => !prev);
+      }, 50); // adjust speed here
+    }
   };
 
-  const stopFlipping = () => {
+  const stopFlicker = () => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
     setShowGlitch(false);
   };
 
+  // Desktop hover behavior
+  const handleMouseEnter = () => {
+    if (!("ontouchstart" in window)) { // ignore mobile
+      startFlicker();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!("ontouchstart" in window)) {
+      stopFlicker();
+    }
+  };
+
+  // Mobile click behavior
+  const handleClick = (e) => {
+    if ("ontouchstart" in window) {
+      e.stopPropagation();
+      if (!isFlickering) {
+        setIsFlickering(true);
+        startFlicker();
+      }
+    }
+  };
+
+  // Stop flicker if clicking outside on mobile
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      if (isFlickering) {
+        setIsFlickering(false);
+        stopFlicker();
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [isFlickering]);
+
   return (
     <div
-      className="relative flex items-center justify-center coinman-hover"
-      style={{ width: "50vw", height: "50vh" }}
+      ref={containerRef}
+      className="relative w-[50vw] max-w-[300px] aspect-square flex items-center justify-center coinman-hover"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
     >
-      {/* Stack two <img> tags */}
+      {/* Images */}
       <img
         src="/images/coinman.png"
         alt="CoinMan"
-        style={{
-          width: "300px",
-          height: "300px",
-          position: "absolute",
-          transition: "opacity 0.05s",
-          opacity: showGlitch ? 0 : 1,
-          pointerEvents: "none",
-        }}
+        className={`absolute top-0 left-0 w-full h-full object-contain ${
+          showGlitch ? "opacity-0" : "opacity-100"
+        }`}
         draggable={false}
       />
       <img
         src="/images/glichman.png"
         alt="CoinMan Glitch"
-        style={{
-          width: "300px",
-          height: "300px",
-          position: "absolute",
-          transition: "opacity 0.05s",
-          opacity: showGlitch ? 1 : 0,
-          pointerEvents: "none",
-        }}
+        className={`absolute top-0 left-0 w-full h-full object-contain ${
+          showGlitch ? "opacity-100" : "opacity-0"
+        }`}
         draggable={false}
-      />
-
-      {/* Hover layer */}
-      <div
-        className="absolute inset-0 z-50"
-        onMouseEnter={startFlipping}
-        onMouseLeave={stopFlipping}
       />
     </div>
   );
 };
 
 export default CoinMan;
+    
