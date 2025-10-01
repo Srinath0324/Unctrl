@@ -15,19 +15,14 @@ export default function Hero() {
         muted
         playsInline
         preload="metadata"
+        poster="/images/rage-apng.png"
       >
         {/* Modern browsers pick WebM first */}
         <source src="/assets/videos/rage.webm" type="video/webm" />
         {/* Universal fallback */}
         <source src="/assets/videos/rage.mp4" type="video/mp4" />
         {/* Final fallback image */}
-        <Image
-          src="/images/rage-apng.png"
-          alt="rage background"
-          fill
-          priority
-          className="object-cover"
-        />
+       
       </video> 
 
       {/* Foreground content */}

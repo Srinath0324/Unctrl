@@ -38,7 +38,7 @@ const CoinMan = () => {
 
       {/* Invisible hover layer on top */}
       <div
-        className="absolute inset-0 cursor-pointer z-50"
+        className="absolute inset-0 coinman-hover z-50"
         onMouseEnter={startFlipping}
         onMouseLeave={stopFlipping}
       />

@@ -70,14 +70,14 @@ export default function ComingSoon() {
               loop
               muted
               playsInline
-              className="w-full h-auto object-cover 
+              className="w-full h-auto object-cover z-20
                          aspect-square 2xl:aspect-[4/2] 
                          shadow-[6px_6px_0px_0px_rgba(138,43,226,1)]"
             />
 </div>
             {/* Violet pixel motion */}
             <motion.div
-              className="absolute top-1/2 z-20"
+              className="absolute top-1/2 z-10"
               style={{
                 y: springY,             // vertical motion
                 x: springX,             // horizontal motion

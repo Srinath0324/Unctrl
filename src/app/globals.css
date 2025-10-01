@@ -10,9 +10,6 @@
 	--brand-purple: #9b5de5;
 }
 
-body {
-  cursor: url('/images/imgi_13_default.png');
-}
 
 @theme inline {
 	--color-background: var(--background);
@@ -170,4 +167,24 @@ main > footer.is-in-view {
 		animation: none;
 		transform: none;
 	}
+}
+
+/* Default cursor everywhere */
+html,
+body {
+  cursor: url('/images/Cursor_norm.png'), auto;
+}
+
+/* Replace global pointer with cursor_boring */
+a:hover,
+button:hover,
+.boaring-hover,
+.clickable:hover {
+  cursor: url('/images/cursor_boring.png'), pointer;
+}
+
+/* CoinMan + UnCtrlButton use their special hover cursor */
+.coinman-hover:hover,
+.unctrlbutton-hover:hover {
+  cursor: url('/images/Cursor_1011.png'), pointer;
 }

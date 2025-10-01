@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const UnCtrlButton = ({ children }) => {
   return (
     <motion.button
-      className="relative btn-primary font-semibold text-white bg-orange-500 shadow-md transition-all duration-300"
+      className="relative btn-primary font-semibold text-white bg-orange-500 shadow-md transition-all duration-300 unctrlbutton-hover"
       whileHover={{
         backgroundColor: "#111111",     // dark background on hover
         color: "#FFFFFF",              // white text

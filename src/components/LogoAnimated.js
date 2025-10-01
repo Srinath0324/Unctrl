@@ -130,7 +130,7 @@ export default function LogoAnimated({
 
 			{/* Overlay controllable image/gif with independent sizing/position */}
 			<div
-				className={`absolute pointer-events-auto cursor-pointer ${overlayClassName}`}
+				className={`absolute pointer-events-auto boaring-hover ${overlayClassName}`}
 				style={overlayWrapperStyle}
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}

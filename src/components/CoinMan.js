@@ -21,21 +21,37 @@ const CoinMan = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center" style={{ width: "50vw", height: "50vh" }}>
-      {/* CoinMan image visually behind marquee */}
+    <div
+      className="relative flex items-center justify-center coinman-hover"
+      style={{ width: "50vw", height: "50vh" }}
+    >
+      {/* Preload both images, stack them */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <Image
-          src={showGlitch ? "/images/glichman.png" : "/images/coinman.png"}
-          alt="CoinMan"
+          src="/images/coinman.png"
+          alt="CoinMan Normal"
           width={300}
           height={300}
           draggable={false}
+          className={`transition-opacity duration-75 ${
+            showGlitch ? "opacity-0" : "opacity-100"
+          }`}
+        />
+        <Image
+          src="/images/glichman.png"
+          alt="CoinMan Glitch"
+          width={300}
+          height={300}
+          draggable={false}
+          className={`absolute transition-opacity duration-75 ${
+            showGlitch ? "opacity-100" : "opacity-0"
+          }`}
         />
       </div>
 
-      {/* Hover layer on top of everything (invisible) */}
+      {/* Hover layer on top */}
       <div
-        className="absolute inset-0 cursor-pointer z-50"
+        className="absolute inset-0 coinman-hover z-50"
         onMouseEnter={startFlipping}
         onMouseLeave={stopFlipping}
       />
