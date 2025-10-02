@@ -11,14 +11,21 @@ export default function IntroOverlay({ onFinished }) {
     if (!video) return;
 
     const handleVideoEnd = () => onFinished?.();
-    const handleVideoError = () => onFinished?.();
+    const handleVideoError = () => {
+      setIsVideoLoaded(true); // hide loader if video fails
+      onFinished?.();
+    };
 
     video.addEventListener("ended", handleVideoEnd);
     video.addEventListener("error", handleVideoError);
 
+    // Fallback: hide loader after 3s even if video doesn’t load
+    const timeout = setTimeout(() => setIsVideoLoaded(true), 3000);
+
     return () => {
       video.removeEventListener("ended", handleVideoEnd);
       video.removeEventListener("error", handleVideoError);
+      clearTimeout(timeout);
     };
   }, [onFinished]);
 
@@ -50,10 +57,10 @@ export default function IntroOverlay({ onFinished }) {
         preload="auto"
         aria-hidden="true"
         onLoadedData={() => setIsVideoLoaded(true)}
+        onCanPlayThrough={() => setIsVideoLoaded(true)}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>
     </div>
   );
 }
- 
