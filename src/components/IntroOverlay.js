@@ -11,41 +11,32 @@ export default function IntroOverlay({ onFinished }) {
     if (!video) return;
 
     const handleVideoEnd = () => onFinished?.();
-    const handleVideoError = () => {
-      setIsVideoLoaded(true); // hide loader if video fails
-      onFinished?.();
-    };
+    const handleVideoError = () => onFinished?.();
 
     video.addEventListener("ended", handleVideoEnd);
     video.addEventListener("error", handleVideoError);
 
-    // Fallback: hide loader after 3s even if video doesn’t load
-    const timeout = setTimeout(() => setIsVideoLoaded(true), 3000);
-
     return () => {
       video.removeEventListener("ended", handleVideoEnd);
       video.removeEventListener("error", handleVideoError);
-      clearTimeout(timeout);
     };
   }, [onFinished]);
 
-  // Decide mobile vs desktop video
-  const isMobile =
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false;
+  // Determine video source based on screen width
+  const isMobile = typeof window !== "undefined" ? window.innerWidth <= 768 : false;
   const videoSrc = isMobile
-    ? "/assets/videos/Introvertical.mp4"
+    ? "/assets/videos/introVertical.mp4"
     : "/assets/videos/intro.mp4";
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
-      {/* Loader (centered) */}
+    <div className="fixed inset-0 z-[9999] bg-black">
+      {/* Loader overlay */}
       {!isVideoLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center z-50">
-          <div className="w-14 h-14 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
         </div>
       )}
 
-      {/* Intro video */}
       <video
         ref={videoRef}
         className={`w-full h-full object-cover transition-opacity duration-500 ${
@@ -57,7 +48,6 @@ export default function IntroOverlay({ onFinished }) {
         preload="auto"
         aria-hidden="true"
         onLoadedData={() => setIsVideoLoaded(true)}
-        onCanPlayThrough={() => setIsVideoLoaded(true)}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>
