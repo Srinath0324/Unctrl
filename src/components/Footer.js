@@ -10,7 +10,7 @@ export default function Footer() {
 						<img 
 							src="/images/Group 1 1.png" 
 							alt="UNCTRL Logo" 
-							className="w-70  sm:w-80 lg:w-150 lg:h-45 rotate-270 sm:rotate-0 translate-y-30 sm:translate-y-0
+							className="w-90  sm:w-80 lg:w-150 lg:h-45 rotate-270 sm:rotate-0 translate-y-30 sm:translate-y-0
 							translate-x-[-90px] sm:translate-x-0
 							"
 						/>
