@@ -48,7 +48,6 @@ export default function IntroOverlay({ onFinished }) {
         playsInline
         autoPlay
         preload="auto"
-        poster="/assets/videos/poster.jpg" // fallback image before video
         aria-hidden="true"
         onLoadedData={() => setIsVideoLoaded(true)}
       >
@@ -57,3 +56,4 @@ export default function IntroOverlay({ onFinished }) {
     </div>
   );
 }
+ 
