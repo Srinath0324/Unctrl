@@ -5,6 +5,17 @@ import { useEffect, useRef, useState } from "react";
 export default function IntroOverlay({ onFinished }) {
   const videoRef = useRef(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [videoSrc, setVideoSrc] = useState(null);
+
+  useEffect(() => {
+    // Decide mobile vs desktop after client-side render
+    const isMobile = window.innerWidth <= 768;
+    setVideoSrc(
+      isMobile
+        ? "/assets/videos/Introvertical.mp4"
+        : "/assets/videos/intro.mp4"
+    );
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -22,13 +33,6 @@ export default function IntroOverlay({ onFinished }) {
     };
   }, [onFinished]);
 
-  // Decide mobile vs desktop video
-  const isMobile =
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false;
-  const videoSrc = isMobile
-    ? "/assets/videos/Introvertical.mp4"
-    : "/assets/videos/intro.mp4";
-
   return (
     <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
       {/* Loader (centered) */}
@@ -38,22 +42,24 @@ export default function IntroOverlay({ onFinished }) {
         </div>
       )}
 
-      {/* Intro video */}
-      <video
-        ref={videoRef}
-        className={`w-full h-full object-cover transition-opacity duration-500 ${
-          isVideoLoaded ? "opacity-100" : "opacity-0"
-        }`}
-        muted
-        playsInline
-        autoPlay
-        preload="auto"
-        poster="/assets/videos/poster.jpg" // fallback image before video
-        aria-hidden="true"
-        onLoadedData={() => setIsVideoLoaded(true)}
-      >
-        <source src={videoSrc} type="video/mp4" />
-      </video>
+      {videoSrc && (
+        <video
+          ref={videoRef}
+          className={`w-full h-full object-cover transition-opacity duration-500 ${
+            isVideoLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          muted
+          playsInline
+          disableRemotePlayback
+          autoPlay
+          preload="auto"
+          poster="/assets/videos/poster.jpg"
+          aria-hidden="true"
+          onLoadedData={() => setIsVideoLoaded(true)}
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      )}
     </div>
   );
 }
