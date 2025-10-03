@@ -6,25 +6,9 @@ export default function IntroOverlay({ onFinished }) {
   const videoRef = useRef(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
-  // Detect mobile (pick correct video)
-  const isMobile =
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false;
-  const videoSrc = isMobile
-    ? "/assets/videos/Introvertical.mp4"
-    : "/assets/videos/intro.mp4";
-
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    // Force mute for autoplay on iOS/Android
-    video.muted = true;
-
-    // Try autoplay (some mobile browsers block otherwise)
-    video.play().catch(() => {
-      // if autoplay fails, skip intro
-      onFinished?.();
-    });
 
     const handleVideoEnd = () => onFinished?.();
     const handleVideoError = () => onFinished?.();
@@ -32,19 +16,18 @@ export default function IntroOverlay({ onFinished }) {
     video.addEventListener("ended", handleVideoEnd);
     video.addEventListener("error", handleVideoError);
 
-    // Timeout fallback: skip if video stuck
-    const timeout = setTimeout(() => {
-      if (!isVideoLoaded) {
-        onFinished?.();
-      }
-    }, 6000); // max wait 6s
-
     return () => {
       video.removeEventListener("ended", handleVideoEnd);
       video.removeEventListener("error", handleVideoError);
-      clearTimeout(timeout);
     };
-  }, [isVideoLoaded, onFinished]);
+  }, [onFinished]);
+
+  // Decide mobile vs desktop video
+  const isMobile =
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false;
+  const videoSrc = isMobile
+    ? "/assets/videos/Introvertical.mp4"
+    : "/assets/videos/intro.mp4";
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
@@ -61,14 +44,13 @@ export default function IntroOverlay({ onFinished }) {
         className={`w-full h-full object-cover transition-opacity duration-500 ${
           isVideoLoaded ? "opacity-100" : "opacity-0"
         }`}
-        poster="/assets/videos/intro-poster.jpg" // fallback image
         muted
         playsInline
         autoPlay
         preload="auto"
+        poster="/assets/videos/poster.jpg" // fallback image before video
         aria-hidden="true"
-        onCanPlayThrough={() => setIsVideoLoaded(true)}
-        onLoadedData={() => setIsVideoLoaded(true)} // keep as backup
+        onLoadedData={() => setIsVideoLoaded(true)}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>

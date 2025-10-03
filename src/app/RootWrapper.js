@@ -10,7 +10,7 @@ export default function RootWrapper({ children }) {
   const [isClient, setIsClient] = useState(false);
 
   // toggle: true = always show, false = first visit only
-  const PLAY_INTRO_EVERY_TIME = false;
+  const PLAY_INTRO_EVERY_TIME = true;
 
   useEffect(() => {
     setIsClient(true);
