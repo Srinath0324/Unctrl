@@ -18,7 +18,8 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* ✅ Preload both video variants */}
-        <link
+        {/* this is just for testing */}
+        <link  
           rel="preload"
           as="video"
           href="/assets/videos/intro.mp4"
