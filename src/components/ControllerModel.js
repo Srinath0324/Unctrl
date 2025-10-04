@@ -1,5 +1,5 @@
 "use client";
-
+useGLTF.preload("/models/c3.glb");
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState, Suspense } from "react";
