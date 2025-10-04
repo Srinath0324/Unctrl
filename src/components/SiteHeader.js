@@ -7,7 +7,7 @@ import MobileNav from "@/components/MobileNav";
 export default function SiteHeader({ children }) {
   const [show, setShow] = useState(false);
 
-  const desktopNavHeight = 70; // px
+  const desktopNavHeight = 80; // px
   const mobileNavHeight = 64; // px
 
   useEffect(() => {
@@ -38,7 +38,8 @@ export default function SiteHeader({ children }) {
         }`}
         style={{ height: `${desktopNavHeight}px` }}
       >
-        <DesktopNav />
+        <DesktopNav height={desktopNavHeight} />
+
       </div>
 
       {/* Mobile Navbar */}

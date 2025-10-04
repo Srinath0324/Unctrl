@@ -1,3 +1,5 @@
+import UnCtrlButton from "@/components/UnCtrlButton";
+
 export default function Hero() {
   return (
     <section
@@ -32,9 +34,9 @@ export default function Hero() {
         <source src="/assets/videos/mouse.mp4" type="video/mp4" />
       </video>
 
-      <div className="relative z-10 w-full flex items-center justify-center">
-        {/* Hero content here */}
-      </div>
+<div className="absolute top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+  <UnCtrlButton>Order Now</UnCtrlButton>
+</div>
     </section>
   );
 }

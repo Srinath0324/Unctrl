@@ -96,8 +96,8 @@ export default function ComingSoon() {
           >
             <Image
               src="/images/violetPixel.png"
-              width={200}
-              height={200}
+              width={175}
+              height={175}
               alt="violet pixel"
             />
           </motion.div>
