@@ -1,15 +1,23 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber"; // ✅ useThree added
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState, useMemo, Suspense } from "react";
-import * as THREE from "three";
+import {
+  VideoTexture,
+  sRGBEncoding,
+  Color,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  Raycaster,
+  Vector2
+} from "three";
 
 function ControllerInner({ animateIn }) {
   const { scene, nodes } = useGLTF("/models/c3.glb");
-  const { gl, camera } = useThree(); // safe inside Canvas
-  const raycaster = useRef(new THREE.Raycaster());
-  const mouse = useRef(new THREE.Vector2());
+  const { gl, camera } = useThree();
+  const raycaster = useRef(new Raycaster());
+  const mouse = useRef(new Vector2());
 
   const [isGlowing, setIsGlowing] = useState(false);
   const finalScale = 20;
@@ -27,11 +35,11 @@ function ControllerInner({ animateIn }) {
     video.autoplay = true;
     video.play().catch(() => {});
 
-    const videoTexture = new THREE.VideoTexture(video);
+    const videoTexture = new VideoTexture(video);
     videoTexture.flipY = false;
-    videoTexture.encoding = THREE.sRGBEncoding;
+    videoTexture.encoding = sRGBEncoding;
 
-    nodes.Object_55.material = new THREE.MeshBasicMaterial({ map: videoTexture });
+    nodes.Object_55.material = new MeshBasicMaterial({ map: videoTexture });
   }, [nodes.Object_55]);
 
   // Scale & rotation
@@ -45,9 +53,9 @@ function ControllerInner({ animateIn }) {
   const button = nodes["left_buttons"];
   const glowMaterial = useMemo(() => {
     if (!button) return null;
-    return new THREE.MeshStandardMaterial({
-      color: button.material?.color || new THREE.Color(0xffffff),
-      emissive: new THREE.Color(0xff0000),
+    return new MeshStandardMaterial({
+      color: button.material?.color || new Color(0xffffff),
+      emissive: new Color(0xff0000),
       emissiveIntensity: 0,
       roughness: 0.5,
       metalness: 0.5,
