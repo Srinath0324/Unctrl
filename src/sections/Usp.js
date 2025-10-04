@@ -1,5 +1,11 @@
+"use client";
 import { useRef, useState, useEffect } from "react";
-import ControllerModel from "../components/ControllerModel";
+import dynamic from "next/dynamic";
+
+const ControllerModel = dynamic(
+  () => import("../components/ControllerModel"),
+  { ssr: false }
+);
 
 export default function Usp() {
   const sectionRef = useRef(null);
@@ -23,15 +29,14 @@ export default function Usp() {
   }, []);
 
   return (
-<section
-  id="usp"
-  ref={sectionRef}
-  className="relative min-h-[100svh] bg-black flex items-center justify-center"
->
-  <div className="w-full sm:w-[95vw] aspect-[16/9] max-w-[1600px] flex justify-center items-center overflow-hidden">
-    <ControllerModel animateIn={isVisible} />
-  </div>
-</section>
-
+    <section
+      id="usp"
+      ref={sectionRef}
+      className="relative min-h-[100svh] bg-black flex items-center justify-center"
+    >
+      <div className="w-full sm:w-[95vw] aspect-[16/9] max-w-[1600px] flex justify-center items-center overflow-hidden">
+        <ControllerModel animateIn={isVisible} />
+      </div>
+    </section>
   );
 }
