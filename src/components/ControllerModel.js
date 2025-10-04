@@ -1,14 +1,13 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber"; // ✅ useThree added
 import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState, useMemo, Suspense } from "react";
 import * as THREE from "three";
 
-// --- Move Controller inside Canvas tree ---
 function ControllerInner({ animateIn }) {
-  const { scene, nodes } = useGLTF("/models/c3.glb"); // GLTF loader
-  const { gl, camera } = useThree(); // ✅ now safe inside Canvas
+  const { scene, nodes } = useGLTF("/models/c3.glb");
+  const { gl, camera } = useThree(); // safe inside Canvas
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
 
@@ -43,7 +42,6 @@ function ControllerInner({ animateIn }) {
     scene.rotation.set(0, 0, 0);
   }, [scene]);
 
-  // Button glow
   const button = nodes["left_buttons"];
   const glowMaterial = useMemo(() => {
     if (!button) return null;

@@ -1,10 +1,12 @@
 "use client";
+
 import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
+// This is mandatory for Three.js components
 const ControllerModel = dynamic(
   () => import("../components/ControllerModel"),
-  { ssr: false }
+  { ssr: false } // disable server-side rendering
 );
 
 export default function Usp() {
