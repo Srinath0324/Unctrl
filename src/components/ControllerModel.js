@@ -12,6 +12,7 @@ function Controller() {
   const mouse = useRef(new THREE.Vector2());
 
   const [isGlowing, setIsGlowing] = useState(false);
+  const finalScale = 1000;
 
   // --- Video Texture ---
   useEffect(() => {
@@ -32,21 +33,11 @@ function Controller() {
     nodes.Object_55.material = new THREE.MeshBasicMaterial({ map: videoTexture });
   }, [nodes.Object_55]);
 
-  // --- Scale & position model dynamically ---
+  // --- Set model scale and rotation once --- 
   useEffect(() => {
     if (!scene) return;
-
-    // Compute bounding box
-    const box = new THREE.Box3().setFromObject(scene);
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-
-    // Scale model so it fills the canvas nicely
-    const scaleFactor = 8 / maxDim; // adjust 8 → bigger or smaller
-    scene.scale.setScalar(scaleFactor);
-
-    // Position so only ~3/4 appears
-    scene.position.set(-size.x * 0.25, -size.y / 2, 0);
+    scene.scale.setScalar(finalScale);
+    scene.position.set(0, 0, 0);
     scene.rotation.set(0, 0, 0);
   }, [scene]);
 
@@ -63,7 +54,7 @@ function Controller() {
     })
   );
 
-  // --- Click Handler ---
+  // --- Click Handler for Glow Toggle ---
   useEffect(() => {
     if (!button) return;
 
@@ -76,6 +67,7 @@ function Controller() {
       const intersects = raycaster.current.intersectObject(button, true);
       if (intersects.length > 0) {
         setIsGlowing((prev) => !prev);
+        // Apply glow immediately
         glowMaterial.current.emissiveIntensity = !isGlowing ? 2 : 0;
         button.material = glowMaterial.current;
       }
@@ -92,7 +84,7 @@ export default function ControllerModel() {
   const controlsRef = useRef();
 
   return (
-    <Canvas camera={{ position: [0, 2, 12], fov: 55 }} className="w-full h-full">
+    <Canvas camera={{ position: [0, 2, 10], fov: 55 }} className="w-full h-full">
       <Stage environment="city" intensity={1} adjustCamera shadows={false}>
         <Controller />
       </Stage>
