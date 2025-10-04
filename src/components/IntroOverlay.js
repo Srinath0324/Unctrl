@@ -8,46 +8,42 @@ export default function IntroOverlay({ onFinished }) {
   const [videoSrc, setVideoSrc] = useState("");
   const [isFadingOut, setIsFadingOut] = useState(false);
 
+  // Pick correct video based on screen width
   useEffect(() => {
-    // 1️⃣ Pick correct video based on screen width
     const isMobile = window.innerWidth <= 768;
-    setVideoSrc(isMobile ? "/assets/videos/Introvertical.mp4" : "/assets/videos/intro.mp4");
+    setVideoSrc(isMobile ? "/assets/videos/introVertical.mp4" : "/assets/videos/intro.mp4");
   }, []);
 
+  // Handle video events
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // 2️⃣ Disable scroll while intro plays
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    // 3️⃣ Handle events
     const handleLoadedMetadata = () => {
       setIsVideoLoaded(true);
       const playPromise = video.play();
       if (playPromise) {
         playPromise.catch(() => {
-          console.warn("Autoplay failed, fallback after 3s");
-          triggerFinishWithFade();
+          console.warn("Autoplay failed, skipping intro");
+          finishOverlay();
         });
       }
     };
 
     const handleVideoEnd = () => {
-      triggerFinishWithFade();
+      finishOverlay();
     };
 
     const handleVideoError = () => {
       console.error("Video failed to load");
-      triggerFinishWithFade();
+      finishOverlay();
     };
 
-    const triggerFinishWithFade = () => {
+    const finishOverlay = () => {
       setIsFadingOut(true);
       setTimeout(() => {
         onFinished?.();
-      }, 800); // fade duration match
+      }, 800); // match fade duration
     };
 
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
@@ -55,7 +51,6 @@ export default function IntroOverlay({ onFinished }) {
     video.addEventListener("error", handleVideoError);
 
     return () => {
-      document.body.style.overflow = originalOverflow;
       video.removeEventListener("loadedmetadata", handleLoadedMetadata);
       video.removeEventListener("ended", handleVideoEnd);
       video.removeEventListener("error", handleVideoError);
@@ -76,7 +71,7 @@ export default function IntroOverlay({ onFinished }) {
         </div>
       )}
 
-      {/* Video Element */}
+      {/* Video */}
       {videoSrc && (
         <video
           ref={videoRef}
