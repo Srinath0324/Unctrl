@@ -12,7 +12,7 @@ function Controller() {
   const mouse = useRef(new THREE.Vector2());
 
   const [isGlowing, setIsGlowing] = useState(false);
-  const finalScale = 1000;
+  const finalScale = 20;
 
   // --- Video Texture ---
   useEffect(() => {
