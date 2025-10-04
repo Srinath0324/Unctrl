@@ -19,21 +19,19 @@ export default function Usp() {
     );
 
     observer.observe(sectionRef.current);
-
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section
-      id="usp"
-      ref={sectionRef}
-      className="relative min-h-[100svh] bg-black flex items-center justify-center"
-    >
-      <div className="p-6 sm:p-10 md:p-14 flex justify-center w-full">
-        <div className="w-full max-w-[900px] h-[500px]">
-          <ControllerModel animateIn={isVisible} />
-        </div>
-      </div>
-    </section>
+<section
+  id="usp"
+  ref={sectionRef}
+  className="relative min-h-[100svh] bg-black flex items-center justify-center"
+>
+  <div className="w-full sm:w-[95vw] aspect-[16/9] max-w-[1600px] flex justify-center items-center overflow-hidden">
+    <ControllerModel animateIn={isVisible} />
+  </div>
+</section>
+
   );
 }
