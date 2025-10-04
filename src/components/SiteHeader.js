@@ -7,7 +7,7 @@ import MobileNav from "@/components/MobileNav";
 export default function SiteHeader({ children }) {
   const [show, setShow] = useState(false);
 
-  const desktopNavHeight = 64; // px
+  const desktopNavHeight = 70; // px
   const mobileNavHeight = 64; // px
 
   useEffect(() => {
@@ -20,13 +20,9 @@ export default function SiteHeader({ children }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        // Show navbar when intro is mostly out of view
         setShow(!entry.isIntersecting || entry.intersectionRatio < 0.1);
       }, 
-      { 
-        threshold: [0, 0.1, 0.5, 1],
-        rootMargin: "-20px 0px 0px 0px" // Add some margin to trigger earlier
-      }
+      { threshold: [0, 0.1, 0.5, 1], rootMargin: "-20px 0px 0px 0px" }
     );
 
     observer.observe(intro);
@@ -37,7 +33,7 @@ export default function SiteHeader({ children }) {
     <>
       {/* Desktop Navbar */}
       <div
-        className={`desktop-navbar fixed top-0 inset-x-0 z-[60] transition-transform duration-300 md:block hidden ${
+        className={`desktop-navbar fixed top-0 left-0 w-full z-[60] transition-transform duration-300 md:block hidden ${
           show ? "translate-y-0" : "-translate-y-full"
         }`}
         style={{ height: `${desktopNavHeight}px` }}
@@ -47,7 +43,7 @@ export default function SiteHeader({ children }) {
 
       {/* Mobile Navbar */}
       <div
-        className={`mobile-navbar fixed bottom-0 inset-x-0 z-[70] transition-transform duration-300 md:hidden ${
+        className={`mobile-navbar fixed bottom-0 left-0 w-full z-[70] transition-transform duration-300 md:hidden ${
           show ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ height: `${mobileNavHeight}px` }}
@@ -55,8 +51,8 @@ export default function SiteHeader({ children }) {
         <MobileNav />
       </div>
 
-      {/* Content wrapper - NO PADDING, navbars are fixed and overlay */}
-      <div className="relative">
+      {/* Content wrapper */}
+      <div className="relative overflow-x-hidden">
         {children}
       </div>
     </>

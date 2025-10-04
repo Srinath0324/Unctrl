@@ -74,12 +74,23 @@ body {
 	height: 100%;
 	overflow: hidden;
 }
-
 main {
-	height: 100dvh;
-	overflow: auto;
-	scroll-snap-type: y mandatory;
+  height: 100dvh;
+  overflow-y: auto; /* allow vertical scroll */
+  scroll-snap-type: y mandatory;
+
+  /* Hide scrollbar in Firefox */
+  scrollbar-width: none;
+
+  /* Hide scrollbar in IE/Edge */
+  -ms-overflow-style: none;
 }
+
+/* Hide scrollbar in Chrome, Safari, Edge */
+main::-webkit-scrollbar {
+  display: none;
+}
+
 
 main > section,
 main > footer {

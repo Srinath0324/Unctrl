@@ -2,11 +2,11 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-black"
+      className="relative w-full overflow-x-hidden flex flex-col items-center justify-center bg-black"
     >
       {/* Desktop video */}
       <video
-        className="absolute inset-0 w-full h-full hidden md:block"
+        className="w-full h-auto hidden md:block"
         autoPlay
         loop
         muted
@@ -20,7 +20,7 @@ export default function Hero() {
 
       {/* Mobile video */}
       <video
-        className="absolute inset-0 w-full h-full block md:hidden"
+        className="w-full h-auto block md:hidden"
         autoPlay
         loop
         muted
@@ -32,8 +32,8 @@ export default function Hero() {
         <source src="/assets/videos/mouse.mp4" type="video/mp4" />
       </video>
 
-      <div className="relative z-10 w-full h-full flex items-center justify-center">
-        {/* Add hero text / buttons here */}
+      <div className="relative z-10 w-full flex items-center justify-center">
+        {/* Hero content here */}
       </div>
     </section>
   );
