@@ -3,15 +3,7 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState, useMemo, Suspense } from "react";
-import {
-  VideoTexture,
-  sRGBEncoding,
-  Color,
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-  Raycaster,
-  Vector2
-} from "three";
+import { Color, MeshBasicMaterial, MeshStandardMaterial, Raycaster, Vector2, VideoTexture } from "three";
 
 function ControllerInner({ animateIn }) {
   const { scene, nodes } = useGLTF("/models/c3.glb");
@@ -37,7 +29,7 @@ function ControllerInner({ animateIn }) {
 
     const videoTexture = new VideoTexture(video);
     videoTexture.flipY = false;
-    videoTexture.encoding = sRGBEncoding;
+    videoTexture.encoding = 3001; // sRGBEncoding numeric value
 
     nodes.Object_55.material = new MeshBasicMaterial({ map: videoTexture });
   }, [nodes.Object_55]);
