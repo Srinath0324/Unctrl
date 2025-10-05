@@ -16,7 +16,6 @@ export default function Hero() {
         preload="metadata"
         poster="/images/rage-apng.png"
       >
-        <source src="/assets/videos/rage.webm" type="video/webm" />
         <source src="/assets/videos/rage.mp4" type="video/mp4" />
       </video>
 
@@ -30,8 +29,7 @@ export default function Hero() {
         preload="metadata"
         poster="/images/rage-apng.png"
       >
-        <source src="/assets/videos/verticalHero.webm" type="video/webm" />
-        <source src="/assets/videos/mouse.mp4" type="video/mp4" />
+        <source src="/assets/videos/mouth 1.mp4" type="video/mp4" />
       </video>
 
 <div className="absolute top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
