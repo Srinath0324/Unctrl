@@ -1,10 +1,10 @@
 "use client";
-useGLTF.preload("/models/c3.glb");
+
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
+import { OrbitControls, Environment, useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState, Suspense } from "react";
 import { Color, MeshStandardMaterial, Raycaster, Vector2, VideoTexture } from "three";
-
+useGLTF.preload("/models/c3.glb"); 
 function ControllerInner({ animateIn }) {
   const { scene, nodes } = useGLTF("/models/c3.glb");
   const { gl, camera } = useThree();
@@ -122,26 +122,54 @@ function ControllerInner({ animateIn }) {
 }
 
 export default function ControllerModel({ animateIn }) {
-  const controlsRef = useRef();
-
   return (
-    <Canvas camera={{ position: [0, 3, 35], fov: 55 }} className="w-full h-full">
-      <Suspense fallback={null}>
-        <Stage
-          environment="city"
-          intensity={1}
-          adjustCamera={false}
-          shadows={false}
-        >
-          <ControllerInner animateIn={animateIn} />
-        </Stage>
-      </Suspense>
-      <OrbitControls
-        ref={controlsRef}
-        enableZoom={false}
-        enablePan={true}
-        enableRotate={true}
-      />
-    </Canvas>
+<Canvas
+  camera={{ position: [0, 15, 45], fov: 15 }}
+  onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
+  className="w-full h-full"
+>
+  <Suspense fallback={null}>
+    {/* 🌇 Realistic bright city-style lighting */}
+    <hemisphereLight
+      skyColor={0xffffff}
+      groundColor={0x444444}
+      intensity={1.8}
+    />
+    <directionalLight
+      position={[10, 20, 10]}
+      intensity={3.5}
+      color={0xffffff}
+    />
+    <directionalLight
+      position={[-10, 10, -10]}
+      intensity={2.5}
+      color={0xb0d0ff}
+    />
+    <ambientLight intensity={1.5} />
+
+    {/* ✨ Add environment reflections for realism */}
+    <Environment preset="city" />
+
+    {/* 💡 Optional front fill light to brighten the face */}
+    <rectAreaLight
+      width={15}
+      height={10}
+      intensity={6}
+      color={0xffffff}
+      position={[0, 10, 30]}
+      lookAt={[0, 0, 0]}
+    />
+
+    {/* 🎮 Controller model — already positioned well */}
+    <group position={[2, -5, 0]} scale={[0.4, 0.4, 0.4]}>
+      <ControllerInner animateIn={animateIn} />
+    </group>
+  </Suspense>
+
+  <OrbitControls enableZoom={false} enablePan enableRotate />
+</Canvas>
+
+
+
   );
 }
