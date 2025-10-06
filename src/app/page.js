@@ -32,17 +32,17 @@ export default function Home() {
     });
   };
 
-  return (
+  return (      
     <main className="w-full overflow-x-hidden">
       {isClient && showIntro && <IntroOverlay onFinished={handleIntroFinished} />}
       <Hero />
       <Story />
       <Renders />
       <Usp />
-      {/* <Vibe />
+      <Vibe />
       <ComingSoon />
       <Community />
-      <Faqs />  */}
+      <Faqs /> 
     </main>
   );
 }
