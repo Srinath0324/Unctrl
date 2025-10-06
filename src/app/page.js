@@ -39,10 +39,10 @@ export default function Home() {
       <Story />
       <Renders />
       <Usp />
-      <Vibe />
+      {/* <Vibe />
       <ComingSoon />
       <Community />
-      <Faqs /> 
+      <Faqs />  */}
     </main>
   );
 }

@@ -3,9 +3,9 @@
 import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
-// This is mandatory for Three.js components
-const ControllerModel = dynamic(
-  () => import("../components/ControllerModel"),
+// Updated import for the new file
+const ControllerScene = dynamic(
+  () => import("../components/ControllerModel/ControllerScene"),
   { ssr: false } // disable server-side rendering
 );
 
@@ -37,7 +37,7 @@ export default function Usp() {
       className="relative min-h-[100svh] bg-black flex items-center justify-center"
     >
       <div className="w-full sm:w-[95vw] aspect-[16/9] max-w-[1600px] flex justify-center items-center overflow-hidden">
-        <ControllerModel animateIn={isVisible} />
+        <ControllerScene animateIn={isVisible} />
       </div>
     </section>
   );
