@@ -194,7 +194,7 @@ button:hover,
 }
 
 /* Special hover for CoinMan and UnCtrlButton */
-.coinman-hover:hover,
+.coinman-hover:hover,.fuck-button,
 .unctrlbutton-hover:hover {
   cursor: url('/images/Cursor_1011.png'), pointer;
 }

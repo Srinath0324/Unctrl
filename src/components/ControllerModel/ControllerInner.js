@@ -140,38 +140,46 @@ export default function ControllerInner({ animateIn }) {
   // ----------------------------
   // Click + Hover
   // ----------------------------
-  useEffect(() => {
-    if (!button || !camera) return;
+useEffect(() => {
+  if (!button || !camera) return;
 
-    const handleClick = (e) => {
-      const bounds = gl.domElement.getBoundingClientRect();
-      mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
+  const handleClick = (e) => {
+    const bounds = gl.domElement.getBoundingClientRect();
+    mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
+    mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
 
-      raycaster.current.setFromCamera(mouse.current, camera);
-      if (raycaster.current.intersectObject(button, true).length > 0) {
-        flashButton();
-        changeVideo();
-      }
-    };
+    raycaster.current.setFromCamera(mouse.current, camera);
+    if (raycaster.current.intersectObject(button, true).length > 0) {
+      flashButton();
+      changeVideo();
+    }
+  };
 
-    const handlePointerMove = (e) => {
-      const bounds = gl.domElement.getBoundingClientRect();
-      mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
+  const handlePointerMove = (e) => {
+    const bounds = gl.domElement.getBoundingClientRect();
+    mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
+    mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
 
-      raycaster.current.setFromCamera(mouse.current, camera);
-      gl.domElement.style.cursor =
-        raycaster.current.intersectObject(button, true).length > 0 ? "pointer" : "default";
-    };
+    raycaster.current.setFromCamera(mouse.current, camera);
+    const hovering = raycaster.current.intersectObject(button, true).length > 0;
 
-    gl.domElement.addEventListener("click", handleClick);
-    gl.domElement.addEventListener("pointermove", handlePointerMove);
-    return () => {
-      gl.domElement.removeEventListener("click", handleClick);
-      gl.domElement.removeEventListener("pointermove", handlePointerMove);
-    };
-  }, [button, camera, gl]);
+    if (hovering) {
+      gl.domElement.classList.add("fuck-button"); // ✅ add custom class
+    } else {
+      gl.domElement.classList.remove("fuck-button"); // ✅ remove it when not hovering
+    }
+  };
+
+  gl.domElement.addEventListener("click", handleClick);
+  gl.domElement.addEventListener("pointermove", handlePointerMove);
+
+  return () => {
+    gl.domElement.removeEventListener("click", handleClick);
+    gl.domElement.removeEventListener("pointermove", handlePointerMove);
+    gl.domElement.classList.remove("fuck-button"); // cleanup
+  };
+}, [button, camera, gl]);
+
 
   return <primitive object={scene} />;
 }
