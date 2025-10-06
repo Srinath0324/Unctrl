@@ -14,9 +14,6 @@ export default function ControllerInner({ animateIn }) {
   const finalScale = 0.2;
   const button = nodes.left_buttons;
 
-  // ----------------------------
-  // 🧩 Refs & State
-  // ----------------------------
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
   const glowMaterialRef = useRef();
@@ -25,13 +22,11 @@ export default function ControllerInner({ animateIn }) {
   const [videoIndex, setVideoIndex] = useState(1);
 
   // ----------------------------
-  // 🎥 Setup plane & video texture (once)
+  // Setup plane & video
   // ----------------------------
   useEffect(() => {
-    const mesh = nodes.Object_55;
-    if (!mesh || !scene) return;
+    if (!nodes.Object_55 || !scene) return;
 
-    // ✅ Create <video> element (only once)
     const video = document.createElement("video");
     video.crossOrigin = "Anonymous";
     video.loop = true;
@@ -42,33 +37,27 @@ export default function ControllerInner({ animateIn }) {
     video.play().catch(() => {});
     videoRef.current = video;
 
-    // ✅ Create a video texture
     const videoTexture = new THREE.VideoTexture(video);
     videoTexture.flipY = true;
-    videoTexture.encoding = THREE.sRGBEncoding;
+    videoTexture.encoding = THREE.LinearSRGBColorSpace; // ✅ Updated
     videoTexture.minFilter = THREE.LinearFilter;
     videoTexture.generateMipmaps = false;
 
-    // ✅ Compute bounding box of mesh
+    const mesh = nodes.Object_55;
     const box = new THREE.Box3().setFromObject(mesh);
     const size = new THREE.Vector3();
     box.getSize(size);
     const center = new THREE.Vector3();
     box.getCenter(center);
 
-    // ✅ Plane size with aspect ratio
     const aspect = 16 / 9;
-    const maxWidth = size.x * 0.9;
-    const maxHeight = size.y * 0.9;
-
-    let planeWidth = maxWidth;
+    let planeWidth = size.x * 0.9;
     let planeHeight = planeWidth / aspect;
-    if (planeHeight > maxHeight) {
-      planeHeight = maxHeight;
+    if (planeHeight > size.y * 0.9) {
+      planeHeight = size.y * 0.9;
       planeWidth = planeHeight * aspect;
     }
 
-    // ✅ Create plane material (unaffected by lights)
     const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
     const material = new THREE.MeshBasicMaterial({
       map: videoTexture,
@@ -77,17 +66,14 @@ export default function ControllerInner({ animateIn }) {
     });
 
     const plane = new THREE.Mesh(geometry, material);
-    planeRef.current = plane;
-
-    // ✅ Position plane
     plane.position.copy(center);
     plane.position.y -= size.y * 0.72;
     plane.position.z -= size.z * 1.1;
     plane.rotation.set(-Math.PI / 2, 0, 0);
 
+    planeRef.current = plane;
     mesh.parent.add(plane);
 
-    // ✅ Cleanup
     return () => {
       plane.removeFromParent();
       geometry.dispose();
@@ -98,23 +84,19 @@ export default function ControllerInner({ animateIn }) {
   }, [nodes.Object_55, scene]);
 
   // ----------------------------
-  // 🔄 Switch video when index changes
+  // Switch video
   // ----------------------------
   useEffect(() => {
     if (!videoRef.current) return;
     const video = videoRef.current;
-
     video.pause();
     video.src = `/assets/videos/${videoIndex}.mp4`;
     video.load();
-
-    video.onloadedmetadata = () => {
-      video.play().catch(() => {});
-    };
+    video.onloadedmetadata = () => video.play().catch(() => {});
   }, [videoIndex]);
 
   // ----------------------------
-  // 🌐 Model Transform
+  // Model Transform
   // ----------------------------
   useEffect(() => {
     if (!scene) return;
@@ -124,12 +106,11 @@ export default function ControllerInner({ animateIn }) {
   }, [scene]);
 
   // ----------------------------
-  // ✨ Glow Effect for Button
+  // Glow Button
   // ----------------------------
   useEffect(() => {
     if (!button) return;
-    const originalMat = button.material;
-    const glowMat = originalMat.clone();
+    const glowMat = button.material.clone();
     glowMat.emissive = new THREE.Color(0xffffff);
     glowMat.emissiveIntensity = 0;
     button.material = glowMat;
@@ -138,80 +119,59 @@ export default function ControllerInner({ animateIn }) {
 
   const flashButton = () => {
     if (!glowMaterialRef.current) return;
-
     let start = null;
     const duration = 500;
     const maxIntensity = 0.5;
-
     const animate = (timestamp) => {
       if (!start) start = timestamp;
-      const elapsed = timestamp - start;
-      const t = Math.min(elapsed / duration, 1);
-      glowMaterialRef.current.emissiveIntensity =
-        Math.sin(t * Math.PI) * maxIntensity;
-
+      const t = Math.min((timestamp - start) / duration, 1);
+      glowMaterialRef.current.emissiveIntensity = Math.sin(t * Math.PI) * maxIntensity;
       if (t < 1) requestAnimationFrame(animate);
       else glowMaterialRef.current.emissiveIntensity = 0;
     };
-
     requestAnimationFrame(animate);
   };
 
   // ----------------------------
-  // 🔘 Change video on click
+  // Change video
   // ----------------------------
-  const changeVideo = () => {
-    setVideoIndex((prev) => {
-      const next = prev === 8 ? 1 : prev + 1;
-      console.log(`Switched to video ${next}`);
-      return next;
-    });
-  };
+  const changeVideo = () => setVideoIndex((prev) => (prev === 8 ? 1 : prev + 1));
 
   // ----------------------------
-  // 🖱️ Click + Hover Interactions
+  // Click + Hover
   // ----------------------------
   useEffect(() => {
     if (!button || !camera) return;
 
-    const handleClick = (event) => {
+    const handleClick = (e) => {
       const bounds = gl.domElement.getBoundingClientRect();
-      mouse.current.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.current.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+      mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
+      mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
 
       raycaster.current.setFromCamera(mouse.current, camera);
-      const intersects = raycaster.current.intersectObject(button, true);
-      if (intersects.length > 0) {
+      if (raycaster.current.intersectObject(button, true).length > 0) {
         flashButton();
-        changeVideo(); // ✅ switch video on click
+        changeVideo();
       }
     };
 
-    gl.domElement.addEventListener("click", handleClick);
-    return () => gl.domElement.removeEventListener("click", handleClick);
-  }, [button, camera, gl]);
-
-  useEffect(() => {
-    if (!button || !camera) return;
-
-    const handlePointerMove = (event) => {
+    const handlePointerMove = (e) => {
       const bounds = gl.domElement.getBoundingClientRect();
-      mouse.current.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.current.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+      mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
+      mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
 
       raycaster.current.setFromCamera(mouse.current, camera);
-      const intersects = raycaster.current.intersectObject(button, true);
       gl.domElement.style.cursor =
-        intersects.length > 0 ? "pointer" : "default";
+        raycaster.current.intersectObject(button, true).length > 0 ? "pointer" : "default";
     };
 
+    gl.domElement.addEventListener("click", handleClick);
     gl.domElement.addEventListener("pointermove", handlePointerMove);
-    return () =>
+    return () => {
+      gl.domElement.removeEventListener("click", handleClick);
       gl.domElement.removeEventListener("pointermove", handlePointerMove);
+    };
   }, [button, camera, gl]);
 
-  // ----------------------------
-  // 🧩 Render
-  // ----------------------------
   return <primitive object={scene} />;
 }
