@@ -45,7 +45,8 @@ export default function ControllerInner({ animateIn }) {
     // ✅ Create a video texture
     const videoTexture = new THREE.VideoTexture(video);
     videoTexture.flipY = true;
-    videoTexture.encoding = THREE.sRGBEncoding;
+    videoTexture.encoding = THREE.LinearEncoding;
+
     videoTexture.minFilter = THREE.LinearFilter;
     videoTexture.generateMipmaps = false;
 
