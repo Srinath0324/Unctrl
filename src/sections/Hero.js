@@ -14,9 +14,8 @@ export default function Hero() {
         muted
         playsInline
         preload="metadata"
-        poster="/images/rage-apng.png"
       >
-        <source src="/assets/videos/rage.mp4" type="video/mp4" />
+        <source src="/assets/videos/mouth 1.mp4" type="video/mp4" />
       </video>
 
       {/* Mobile video */}

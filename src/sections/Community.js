@@ -84,7 +84,7 @@ export default function Community() {
           className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-end"
            style={{
     gap: "180px",
-    transform: "translateX(-75%)", // slightly more to the left
+    transform: "translateX(-90%)", // slightly more to the left
   }}
         >
           <Image
