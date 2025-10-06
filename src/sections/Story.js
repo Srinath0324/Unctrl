@@ -7,17 +7,28 @@ export default function Story() {
       className="relative w-screen min-h-[100svh] bg-black overflow-x-hidden flex items-center justify-center"
       style={{ margin: 0, padding: 0 }}
     >
-      {/* Background Video */}
+ {/* Desktop video */}
       <video
-        style={{ width: "100vw", height: "auto", display: "block" }}
+        className="w-full h-auto hidden md:block"
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
       >
         <source src="/assets/videos/rage-story.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
+      </video>
+      {/* Mobile video */}
+      <video
+        className="w-full h-auto block md:hidden"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster="/images/rage-apng.png"
+      >
+        <source src="/assets/videos/s2.mp4" type="video/mp4" />
       </video>
     </section>
   );

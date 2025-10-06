@@ -50,7 +50,7 @@ export default function ComingSoon() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center m-4 sm:m-10 relative">
           {/* First video */}
           <video
-            src="/assets/videos/keyboard.mp4"
+            src="/assets/videos/comingsoon1.mp4"
             autoPlay
             loop
             muted
@@ -68,7 +68,7 @@ export default function ComingSoon() {
           {/* Second video */}
           <div className="relative w-full h-full flex items-center justify-center">
             <video
-              src="/assets/videos/mouse.mp4"
+              src="/assets/videos/comingsoon2.mp4"
               autoPlay
               loop
               muted
