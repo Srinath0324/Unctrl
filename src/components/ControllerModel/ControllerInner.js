@@ -3,19 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import {
-  VideoTexture,
-  MeshBasicMaterial,
-  PlaneGeometry,
-  Box3,
-  Vector3,
-  Color,
-  Raycaster,
-  Mesh,
-  sRGBEncoding,
-  LinearFilter,
-  DoubleSide,
-} from "three";
+import * as THREE from "three";
 
 useGLTF.preload("/models/c3.glb");
 
@@ -27,23 +15,23 @@ export default function ControllerInner({ animateIn }) {
   const button = nodes.left_buttons;
 
   // ----------------------------
-  // Refs & State
+  // 🧩 Refs & State
   // ----------------------------
-  const raycaster = useRef(new Raycaster());
-  const mouse = useRef(new Vector3());
+  const raycaster = useRef(new THREE.Raycaster());
+  const mouse = useRef(new THREE.Vector2());
   const glowMaterialRef = useRef();
   const videoRef = useRef(null);
   const planeRef = useRef(null);
   const [videoIndex, setVideoIndex] = useState(1);
 
   // ----------------------------
-  // Setup plane & video texture
+  // 🎥 Setup plane & video texture (once)
   // ----------------------------
   useEffect(() => {
     const mesh = nodes.Object_55;
     if (!mesh || !scene) return;
 
-    // Video element
+    // ✅ Create <video> element (only once)
     const video = document.createElement("video");
     video.crossOrigin = "Anonymous";
     video.loop = true;
@@ -54,24 +42,25 @@ export default function ControllerInner({ animateIn }) {
     video.play().catch(() => {});
     videoRef.current = video;
 
-    // Video texture
-    const videoTexture = new VideoTexture(video);
+    // ✅ Create a video texture
+    const videoTexture = new THREE.VideoTexture(video);
     videoTexture.flipY = true;
-    videoTexture.encoding = sRGBEncoding;
-    videoTexture.minFilter = LinearFilter;
+    videoTexture.encoding = THREE.sRGBEncoding;
+    videoTexture.minFilter = THREE.LinearFilter;
     videoTexture.generateMipmaps = false;
 
-    // Bounding box
-    const box = new Box3().setFromObject(mesh);
-    const size = new Vector3();
+    // ✅ Compute bounding box of mesh
+    const box = new THREE.Box3().setFromObject(mesh);
+    const size = new THREE.Vector3();
     box.getSize(size);
-    const center = new Vector3();
+    const center = new THREE.Vector3();
     box.getCenter(center);
 
-    // Plane size
+    // ✅ Plane size with aspect ratio
     const aspect = 16 / 9;
     const maxWidth = size.x * 0.9;
     const maxHeight = size.y * 0.9;
+
     let planeWidth = maxWidth;
     let planeHeight = planeWidth / aspect;
     if (planeHeight > maxHeight) {
@@ -79,18 +68,18 @@ export default function ControllerInner({ animateIn }) {
       planeWidth = planeHeight * aspect;
     }
 
-    // Plane material
-    const geometry = new PlaneGeometry(planeWidth, planeHeight);
-    const material = new MeshBasicMaterial({
+    // ✅ Create plane material (unaffected by lights)
+    const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+    const material = new THREE.MeshBasicMaterial({
       map: videoTexture,
-      side: DoubleSide,
+      side: THREE.DoubleSide,
       toneMapped: false,
     });
 
-    const plane = new Mesh(geometry, material);
+    const plane = new THREE.Mesh(geometry, material);
     planeRef.current = plane;
 
-    // Position plane
+    // ✅ Position plane
     plane.position.copy(center);
     plane.position.y -= size.y * 0.72;
     plane.position.z -= size.z * 1.1;
@@ -98,7 +87,7 @@ export default function ControllerInner({ animateIn }) {
 
     mesh.parent.add(plane);
 
-    // Cleanup
+    // ✅ Cleanup
     return () => {
       plane.removeFromParent();
       geometry.dispose();
@@ -109,7 +98,7 @@ export default function ControllerInner({ animateIn }) {
   }, [nodes.Object_55, scene]);
 
   // ----------------------------
-  // Switch video on index change
+  // 🔄 Switch video when index changes
   // ----------------------------
   useEffect(() => {
     if (!videoRef.current) return;
@@ -125,7 +114,7 @@ export default function ControllerInner({ animateIn }) {
   }, [videoIndex]);
 
   // ----------------------------
-  // Model transform
+  // 🌐 Model Transform
   // ----------------------------
   useEffect(() => {
     if (!scene) return;
@@ -135,13 +124,13 @@ export default function ControllerInner({ animateIn }) {
   }, [scene]);
 
   // ----------------------------
-  // Glow effect for button
+  // ✨ Glow Effect for Button
   // ----------------------------
   useEffect(() => {
     if (!button) return;
     const originalMat = button.material;
     const glowMat = originalMat.clone();
-    glowMat.emissive = new Color(0xffffff);
+    glowMat.emissive = new THREE.Color(0xffffff);
     glowMat.emissiveIntensity = 0;
     button.material = glowMat;
     glowMaterialRef.current = glowMat;
@@ -149,6 +138,7 @@ export default function ControllerInner({ animateIn }) {
 
   const flashButton = () => {
     if (!glowMaterialRef.current) return;
+
     let start = null;
     const duration = 500;
     const maxIntensity = 0.5;
@@ -168,14 +158,18 @@ export default function ControllerInner({ animateIn }) {
   };
 
   // ----------------------------
-  // Change video on button click
+  // 🔘 Change video on click
   // ----------------------------
   const changeVideo = () => {
-    setVideoIndex((prev) => (prev === 8 ? 1 : prev + 1));
+    setVideoIndex((prev) => {
+      const next = prev === 8 ? 1 : prev + 1;
+      console.log(`Switched to video ${next}`);
+      return next;
+    });
   };
 
   // ----------------------------
-  // Click + Hover
+  // 🖱️ Click + Hover Interactions
   // ----------------------------
   useEffect(() => {
     if (!button || !camera) return;
@@ -189,7 +183,7 @@ export default function ControllerInner({ animateIn }) {
       const intersects = raycaster.current.intersectObject(button, true);
       if (intersects.length > 0) {
         flashButton();
-        changeVideo();
+        changeVideo(); // ✅ switch video on click
       }
     };
 
@@ -217,7 +211,7 @@ export default function ControllerInner({ animateIn }) {
   }, [button, camera, gl]);
 
   // ----------------------------
-  // Render
+  // 🧩 Render
   // ----------------------------
   return <primitive object={scene} />;
 }
