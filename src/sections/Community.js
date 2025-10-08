@@ -87,13 +87,14 @@ export default function Community() {
     transform: "translateX(-90%)", // slightly more to the left
   }}
         >
-          <Image
-            src="/images/yellowPixel.png"
-            width={200}
-            height={200}
-            alt="yellow pixel"
-          />
-          {/* Violet pixel REMOVED, because it falls in dynamically */}
+           <Image
+    src="/images/yellowPixel.png"
+    width={200}
+    height={200}
+    alt="yellow pixel"
+    className="w-[200px] h-[200px] md:w-[180px] md:h-[180px] lg:w-[180px] lg:h-[180px]"
+  />
+  
         </div>
 
         <div className="absolute inset-0 pointer-events-none" />
