@@ -26,7 +26,6 @@ export default function Story() {
         muted
         playsInline
         preload="metadata"
-        poster="/images/rage-apng.png"
       >
         <source src="/assets/videos/s2.mp4" type="video/mp4" />
       </video>

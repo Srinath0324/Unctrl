@@ -5,58 +5,40 @@ import { useEffect, useRef, useState } from "react";
 export default function IntroOverlay({ onFinished }) {
   const videoRef = useRef(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [videoSrc, setVideoSrc] = useState("");
   const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // Pick correct video based on screen width
-  useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
-    setVideoSrc(isMobile ? "/assets/videos/introVertical.mp4" : "/assets/videos/intro.mp4");
-  }, []);
+  // Determine correct video src based on screen width
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const videoSrc = isMobile ? "/assets/videos/introVertical.mp4" : "/assets/videos/intro.mp4";
 
-  // Handle video events
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleLoadedMetadata = () => {
-      setIsVideoLoaded(true);
-      const playPromise = video.play();
-      if (playPromise) {
-        playPromise.catch(() => {
-          console.warn("Autoplay failed, skipping intro");
-          finishOverlay();
-        });
-      }
-    };
-
-    const handleVideoEnd = () => {
-      finishOverlay();
-    };
-
-    const handleVideoError = () => {
-      console.error("Video failed to load");
-      finishOverlay();
-    };
-
     const finishOverlay = () => {
       setIsFadingOut(true);
-      setTimeout(() => {
-        onFinished?.();
-      }, 800); // match fade duration
+      setTimeout(() => onFinished?.(), 800); // match fade duration
     };
 
-    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+    const handleCanPlay = () => {
+      setIsVideoLoaded(true);
+      video.play().catch(() => finishOverlay());
+    };
+
+    const handleVideoEnd = () => finishOverlay();
+    const handleVideoError = () => finishOverlay();
+
+    video.addEventListener("canplay", handleCanPlay);
     video.addEventListener("ended", handleVideoEnd);
     video.addEventListener("error", handleVideoError);
 
     return () => {
-      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("ended", handleVideoEnd);
       video.removeEventListener("error", handleVideoError);
       video.pause();
     };
-  }, [onFinished, videoSrc]);
+  }, [onFinished]);
 
   return (
     <div
@@ -64,26 +46,24 @@ export default function IntroOverlay({ onFinished }) {
         isFadingOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      {/* Loading Spinner */}
+      {/* Spinner until video is ready */}
       {!isVideoLoaded && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
         </div>
       )}
 
-      {/* Video */}
-      {videoSrc && (
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          className={`w-full h-full object-cover transition-opacity duration-500 ${
-            isVideoLoaded ? "opacity-100" : "opacity-0"
-          }`}
-          muted
-          playsInline
-          preload="auto"
-        />
-      )}
+      {/* Video element — starts loading immediately */}
+      <video
+        ref={videoRef}
+        src={videoSrc}
+        className={`w-full h-full object-cover transition-opacity duration-500 ${
+          isVideoLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        muted
+        playsInline
+        preload="auto"
+      />
     </div>
   );
 }
