@@ -19,7 +19,7 @@ export default function DesktopNav({ height = 78 }) {
               <AnimatedLink value={item} />
             </Link>
           ))}
-          <UnCtrlButton>Order Now</UnCtrlButton>
+          <UnCtrlButton>ORDER NOW</UnCtrlButton>
         </nav>
       </div>
     </div>

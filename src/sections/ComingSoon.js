@@ -59,7 +59,7 @@ export default function ComingSoon() {
               w-[85%] sm:w-full 
               mx-auto 
               h-auto object-cover 
-              aspect-square 2xl:aspect-[4/2]
+              aspect-square  
               shadow-[6px_6px_0px_0px_rgba(255,255,0,1)]
               rounded-lg
             "
@@ -77,7 +77,7 @@ export default function ComingSoon() {
                 w-[85%] sm:w-full 
                 mx-auto 
                 h-auto object-cover z-20
-                aspect-square 2xl:aspect-[4/2]
+                aspect-square  
                 shadow-[6px_6px_0px_0px_rgba(138,43,226,1)]
                 rounded-lg
               "

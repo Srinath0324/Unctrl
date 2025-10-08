@@ -41,8 +41,7 @@ export default function Home() {
       {/* Scroll effects wrapper */}
       <ScrollEffects>
         {/* Above-the-fold */}
-        <Hero />
-
+        <Hero /> 
         {/* Sections that are light enough to mount immediately */}
         <Story />
         <Renders />

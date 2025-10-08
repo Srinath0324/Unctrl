@@ -10,10 +10,10 @@ export default function ControllerScene({ animateIn }) {
     <Canvas camera={{ position: [0, 15, 45], fov: 15 }}>
       <Suspense fallback={null}>
         {/* Lights */}
-        <hemisphereLight skyColor={0xffffff} groundColor={0x444444} intensity={1.8} />
-        <directionalLight position={[10, 20, 10]} intensity={3.5} />
+        <hemisphereLight skyColor={0xffffff} groundColor={0x444444} intensity={2.8} />
+        <directionalLight position={[10, 20, 10]} intensity={4.5} />
         <directionalLight position={[-10, 10, -10]} intensity={2.5} color={0xb0d0ff} />
-        <ambientLight intensity={1.5} />
+        <ambientLight intensity={50.5} />
 
         {/* Environment reflections */}
         <Environment preset="city" />

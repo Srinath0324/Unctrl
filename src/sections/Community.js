@@ -6,15 +6,11 @@ import UnCtrlButton from "@/components/UnCtrlButton";
 
 export default function Community() {
   const sectionRef = useRef(null);
-  const y = useMotionValue(200); 
+  const y = useMotionValue(200);
   const scale = useMotionValue(1);
 
   const springY = useSpring(y, { stiffness: 150, damping: 20, mass: 1 });
-  const springScale = useSpring(scale, {
-    stiffness: 200,
-    damping: 15,
-    mass: 1,
-  });
+  const springScale = useSpring(scale, { stiffness: 200, damping: 15, mass: 1 });
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -67,8 +63,9 @@ export default function Community() {
         id="community"
         className="relative min-h-[100svh] flex items-end justify-center overflow-hidden"
       >
+        {/* Desktop/Tablet video */}
         <video
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover hidden md:block"
           autoPlay
           loop
           muted
@@ -79,22 +76,34 @@ export default function Community() {
           Your browser does not support the video tag.
         </video>
 
+        {/* Mobile video */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover block md:hidden"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        >
+          <source src="/assets/videos/communityVertical.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
         {/* Pixels centered horizontally at the bottom */}
         <div
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-end"
-           style={{
-    gap: "180px",
-    transform: "translateX(-90%)", // slightly more to the left
-  }}
+          className="absolute bottom-0 left-1/2 flex items-end"
+          style={{
+            gap: "180px",
+            transform: "translateX(-90%)", // slightly more to the left
+          }}
         >
-           <Image
-    src="/images/yellowPixel.png"
-    width={200}
-    height={200}
-    alt="yellow pixel"
-    className="w-[200px] h-[200px] md:w-[180px] md:h-[180px] lg:w-[180px] lg:h-[180px]"
-  />
-  
+          <Image
+            src="/images/yellowPixel.png"
+            width={200}
+            height={200}
+            alt="yellow pixel"
+            className="w-[200px] h-[200px] md:w-[180px] md:h-[180px] lg:w-[180px] lg:h-[180px]"
+          />
         </div>
 
         <div className="absolute inset-0 pointer-events-none" />
