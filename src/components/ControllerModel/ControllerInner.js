@@ -7,7 +7,7 @@ import * as THREE from "three";
 import useVideoPlane from "./useVideoPlane";
 import useButtonInteraction from "./useButtonInteraction";
 
-useGLTF.preload("/models/c3.glb");
+useGLTF.preload("/models/c3c.glb");
 
 export default function ControllerInner() {
   const { scene, nodes } = useGLTF("/models/c3.glb");

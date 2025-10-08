@@ -12,7 +12,7 @@ import ComingSoon from "@/sections/ComingSoon";
 import Community from "@/sections/Community";
 import Faqs from "@/sections/Faqs";
 
-// Heavy sections (lazy-loaded only)
+// Heavy sections (lazy-loaded)
 import dynamic from "next/dynamic";
 const Renders = dynamic(() => import("@/sections/Renders"), { ssr: false });
 const Vibe = dynamic(() => import("@/sections/Vibe"), { ssr: false });
@@ -21,28 +21,43 @@ export default function Home() {
   const [showIntro, setShowIntro] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  // Intro overlay logic
   useEffect(() => {
     setIsClient(true);
-    const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
-    if (!hasSeenIntro) setShowIntro(true);
+    
+    // Check if user has seen intro (using a more reliable check)
+    try {
+      const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
+      const lastSeen = sessionStorage.getItem("introLastSeen");
+      const now = Date.now();
+      
+      // Show intro if never seen, or if it's been more than 24 hours
+      if (!hasSeenIntro || !lastSeen || (now - parseInt(lastSeen)) > 86400000) {
+        setShowIntro(true);
+      }
+    } catch (e) {
+      // If sessionStorage fails, just skip the intro
+      console.log("SessionStorage not available");
+    }
   }, []);
 
   const handleIntroFinished = () => {
-    sessionStorage.setItem("hasSeenIntro", "1");
+    try {
+      sessionStorage.setItem("hasSeenIntro", "1");
+      sessionStorage.setItem("introLastSeen", Date.now().toString());
+    } catch (e) {
+      console.log("Could not save to sessionStorage");
+    }
     setShowIntro(false);
   };
 
   return (
     <main className="w-full overflow-x-hidden">
-      {/* Intro overlay on top */}
+      {/* Intro overlay - only shows when needed */}
       {isClient && showIntro && <IntroOverlay onFinished={handleIntroFinished} />}
 
-      {/* Scroll effects wrapper */}
+      {/* Main content - renders immediately regardless of intro */}
       <ScrollEffects>
-        {/* Above-the-fold */}
         <Hero /> 
-        {/* Sections that are light enough to mount immediately */}
         <Story />
         <Renders />
         <Usp />
@@ -50,7 +65,6 @@ export default function Home() {
         <ComingSoon />
         <Community />
         <Faqs />
-
       </ScrollEffects>
     </main>
   );
