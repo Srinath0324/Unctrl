@@ -21,7 +21,7 @@ export default function ComingSoon() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             rotation.set(450);
-            y.set(window.innerHeight * 1.2);
+            y.set(window.innerHeight * 1.2 );
           } else {
             rotation.set(0);
             y.set(0);

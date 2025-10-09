@@ -91,10 +91,10 @@ export default function Community() {
 
         {/* Pixels centered horizontally at the bottom */}
         <div
-          className="absolute bottom-0 left-1/2 flex items-end"
+          className="absolute bottom-0 sm:-bottom-20 left-1/2 flex items-end"
           style={{
             gap: "180px",
-            transform: "translateX(-90%)", // slightly more to the left
+            transform: "translateX(-140%)", // slightly more to the left
           }}
         >
           <Image
@@ -102,7 +102,7 @@ export default function Community() {
             width={200}
             height={200}
             alt="yellow pixel"
-            className="w-[200px] h-[200px] md:w-[180px] md:h-[180px] lg:w-[180px] lg:h-[180px]"
+            className="w-[200px] h-[200px] "
           />
         </div>
 
