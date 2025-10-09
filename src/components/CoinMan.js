@@ -82,7 +82,7 @@ const CoinMan = () => {
       <img
         src="/images/coinman.png"
         alt="CoinMan"
-        className={`absolute top-0 left-0 w-full h-full object-contain ${
+        className={`absolute top-0 left-0 w-full h-full object-contain  ${
           showGlitch ? "opacity-0" : "opacity-100"
         }`}
         draggable={false}

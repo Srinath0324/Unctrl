@@ -3,11 +3,10 @@
 import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { useState, useEffect, useRef } from "react";
-import * as THREE from "three";
 import useVideoPlane from "./useVideoPlane";
 import useButtonInteraction from "./useButtonInteraction";
 
-useGLTF.preload("/models/c3c.glb");
+useGLTF.preload("/models/c3.glb");
 
 export default function ControllerInner() {
   const { scene, nodes } = useGLTF("/models/c3.glb");

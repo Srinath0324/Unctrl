@@ -18,21 +18,47 @@ const videos = [
 ];
 
 function VideoCard({ src }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!videoRef.current) return;
+          if (entry.isIntersecting) {
+            videoRef.current.play().catch(() => {});
+          } else {
+            videoRef.current.pause();
+          }
+        });
+      },
+      { threshold: 0.01 } // play when 1% visible
+    );
+
+    if (videoRef.current) observer.observe(videoRef.current);
+
+    return () => {
+      if (videoRef.current) observer.unobserve(videoRef.current);
+    };
+  }, []);
+
   return (
     <div className="video-card">
       <video
+        ref={videoRef}
         src={src}
         autoPlay
-        loop
         muted
+        loop
         playsInline
-        preload="none"
+        preload="auto"
         className="video-el"
         draggable={false}
       />
     </div>
   );
 }
+
 
 function Row({ onReady, space = 30 }) {
   return (
@@ -42,7 +68,7 @@ function Row({ onReady, space = 30 }) {
         slidesPerView="auto"
         spaceBetween={space}
         allowTouchMove={false}
-        speed={300} // default slide speed
+        speed={300}
         onSwiper={(s) => onReady?.(s)}
         className="vibe-swiper"
       >
@@ -63,7 +89,7 @@ export default function Vibe() {
 
   // Animation settings
   const stepSlides = 1;
-  const slideDurationMs = 300; // increased from 50ms to 300ms for smoothness
+  const slideDurationMs = 300;
   const pauseBetweenRowsMs = 300;
   const pauseBetweenCyclesMs = 1000;
 
@@ -84,7 +110,7 @@ export default function Vibe() {
     const moveSteps = async (swiper, direction = "forward", steps = 3) => {
       if (!swiper) return;
       for (let i = 0; i < steps && !cancelled; i++) {
-        if (direction === "forward") swiper.slideNext(slideDurationMs, true); // smooth transition
+        if (direction === "forward") swiper.slideNext(slideDurationMs, true);
         else swiper.slidePrev(slideDurationMs, true);
         await waitForTransition(swiper);
       }
@@ -95,9 +121,11 @@ export default function Vibe() {
       runningRef.current = true;
 
       while (!cancelled) {
-        if (topRef.current) await moveSteps(topRef.current, "forward", stepSlides);
+        if (topRef.current)
+          await moveSteps(topRef.current, "forward", stepSlides);
         await sleep(pauseBetweenRowsMs);
-        if (bottomRef.current) await moveSteps(bottomRef.current, "backward", stepSlides);
+        if (bottomRef.current)
+          await moveSteps(bottomRef.current, "backward", stepSlides);
         await sleep(pauseBetweenCyclesMs);
       }
     };
@@ -115,23 +143,21 @@ export default function Vibe() {
         {/* Top row */}
         <Row
           onReady={(s) => {
-            console.log("Top Swiper ready", s);
             topRef.current = s;
           }}
         />
 
         {/* Bottom row with horizontal offset */}
-        <div className="bottom-row-offset w-full">
+        <div className="bottom-row-offset w-full z-30">
           <Row
             onReady={(s) => {
-              console.log("Bottom Swiper ready", s);
               bottomRef.current = s;
             }}
           />
         </div>
 
         {/* CoinMan overlay */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-15 pointer-events-none">
           <div className="pointer-events-auto">
             <CoinMan />
           </div>
@@ -170,42 +196,33 @@ export default function Vibe() {
           .bottom-row-offset {
             transform: translateX(-118px);
           }
-        }
-        @media (min-width: 640px) {
-          .bottom-row-offset {
-            transform: translateX(-124px);
-          }
-        }
-        @media (min-width: 768px) {
-          .bottom-row-offset {
-            transform: translateX(-132px);
-          }
-        }
-        @media (min-width: 1024px) {
-          .bottom-row-offset {
-            transform: translateX(-140px);
-          }
-        }
-
-        @media (min-width: 480px) {
           .video-card {
             width: 320px;
             height: 200px;
           }
         }
         @media (min-width: 640px) {
+          .bottom-row-offset {
+            transform: translateX(-124px);
+          }
           .video-card {
             width: 360px;
             height: 220px;
           }
         }
         @media (min-width: 768px) {
+          .bottom-row-offset {
+            transform: translateX(-132px);
+          }
           .video-card {
             width: 420px;
             height: 260px;
           }
         }
         @media (min-width: 1024px) {
+          .bottom-row-offset {
+            transform: translateX(-140px);
+          }
           .video-card {
             width: 480px;
             height: 300px;

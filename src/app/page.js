@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 import IntroOverlay from "@/components/IntroOverlay";
 import ScrollEffects from "@/components/ScrollEffects";
 
-// Lightweight sections (always mounted)
+// Lightweight sections (always SSR)
 import Hero from "@/sections/Hero";
 import Story from "@/sections/Story";
-import Usp from "@/sections/Usp";
+import Renders from "@/sections/Renders"; // SSR is fine
 import ComingSoon from "@/sections/ComingSoon";
 import Community from "@/sections/Community";
 import Faqs from "@/sections/Faqs";
 
 // Heavy sections (lazy-loaded)
 import dynamic from "next/dynamic";
-const Renders = dynamic(() => import("@/sections/Renders"), { ssr: false });
+const Usp = dynamic(() => import("@/sections/Usp"), { ssr: false });
 const Vibe = dynamic(() => import("@/sections/Vibe"), { ssr: false });
 
 export default function Home() {
@@ -23,45 +23,34 @@ export default function Home() {
 
   useEffect(() => {
     setIsClient(true);
-    
-    // Check if user has seen intro (using a more reliable check)
     try {
       const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
       const lastSeen = sessionStorage.getItem("introLastSeen");
       const now = Date.now();
-      
-      // Show intro if never seen, or if it's been more than 24 hours
-      if (!hasSeenIntro || !lastSeen || (now - parseInt(lastSeen)) > 86400000) {
+      if (!hasSeenIntro || !lastSeen || now - parseInt(lastSeen) > 86400000) {
         setShowIntro(true);
       }
-    } catch (e) {
-      // If sessionStorage fails, just skip the intro
-      console.log("SessionStorage not available");
-    }
+    } catch {}
   }, []);
 
   const handleIntroFinished = () => {
     try {
       sessionStorage.setItem("hasSeenIntro", "1");
       sessionStorage.setItem("introLastSeen", Date.now().toString());
-    } catch (e) {
-      console.log("Could not save to sessionStorage");
-    }
+    } catch {}
     setShowIntro(false);
   };
 
   return (
     <main className="w-full overflow-x-hidden">
-      {/* Intro overlay - only shows when needed */}
       {isClient && showIntro && <IntroOverlay onFinished={handleIntroFinished} />}
 
-      {/* Main content - renders immediately regardless of intro */}
       <ScrollEffects>
-        <Hero /> 
+        <Hero />
         <Story />
-        <Renders />
-        <Usp />
-        <Vibe />
+        <Renders />       {/* SSR video */}
+        <Usp />          {/* 3D model, client-only */}
+        <Vibe />         {/* multiple videos, lazy-play */}
         <ComingSoon />
         <Community />
         <Faqs />
