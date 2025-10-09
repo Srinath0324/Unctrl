@@ -119,10 +119,12 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
       isHoveringRef.current = hovering;
       if (hovering) {
         if (glowMaterialRef.current && !isFlashingRef.current) glowMaterialRef.current.emissiveIntensity = HOVER_INTENSITY;
-        gl.domElement.style.cursor = "pointer";
+        // Add special cursor class when hovering the interactive left button
+        gl.domElement.classList.add("fuck-button");
       } else {
         if (glowMaterialRef.current && !isFlashingRef.current) glowMaterialRef.current.emissiveIntensity = BASE_INTENSITY;
-        gl.domElement.style.cursor = "default";
+        // Remove the special cursor class to fall back to default site cursor
+        gl.domElement.classList.remove("fuck-button");
       }
       });
     };
@@ -133,7 +135,7 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
     return () => {
       gl.domElement.removeEventListener("pointerdown", handleDown);
       gl.domElement.removeEventListener("pointermove", handlePointerMove);
-      gl.domElement.style.cursor = "default";
+      gl.domElement.classList.remove("fuck-button");
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [button, camera, gl]);

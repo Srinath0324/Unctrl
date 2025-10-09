@@ -8,7 +8,7 @@ import ControllerInner from "./ControllerInner";
 export default function ControllerScene({ animateIn }) {
   return (
     <Canvas
-      className="w-full h-[90vh]"
+      className="w-full h-[90vh] r3f-canvas"
       dpr={[1, 1.25]}
       camera={{ position: [0, 15, 45], fov: 15 }}
       gl={{ antialias: false, alpha: false, stencil: false, powerPreference: "low-power", preserveDrawingBuffer: false }}

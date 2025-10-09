@@ -41,6 +41,11 @@ export default function IntroOverlay({ onFinished }) {
     };
     tryPlay();
 
+    // Kick off controller asset preloading ASAP in parallel with intro
+    import("@/components/ControllerModel/preloadAssets")
+      .then((m) => m.preloadControllerAssets?.())
+      .catch(() => {});
+
     return () => {
       video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("ended", handleEnd);

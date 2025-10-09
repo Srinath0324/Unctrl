@@ -73,16 +73,16 @@ export default function Hero() {
             ref={videoRef}
             className={
               isMobile
-                ? "w-full h-auto block"
+                ? "w-full h-full object-cover object-bottom"
                 : "absolute top-[-80px] left-0 w-full h-[calc(100vh+80px)] object-cover"
             }
             autoPlay
             loop
             muted
             playsInline
-            preload="none"
-            poster="/images/logo.png"
-            src={isInView ? (isMobile ? mobileSrc : desktopSrc) : undefined}
+            preload="auto"
+            // Start buffering immediately so it's ready when intro ends
+            src={isMobile ? mobileSrc : desktopSrc}
           />
         </div>
       )}

@@ -15,20 +15,25 @@ export default function Usp() {
 
   useEffect(() => {
     if (!sectionRef.current) return;
-
+  
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect();
+          observer.disconnect(); // disconnects after the section becomes visible
         }
       },
-      { threshold: 0, rootMargin: "1200px 0px" }
+      {
+        threshold: 0,
+        rootMargin: "100% 0px 100% 0px" // triggers when section is 1 viewport above or below
+      }
     );
-
+  
     observer.observe(sectionRef.current);
+  
     return () => observer.disconnect();
   }, []);
+  
 
   // Fallback idle preloader in case Hero didn't trigger it (e.g., immediate scroll)
   useEffect(() => {

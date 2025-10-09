@@ -185,6 +185,11 @@ html, body {
   cursor: url('/images/Cursor_norm.png'), auto;
 }
 
+/* Ensure the R3F canvas inherits the site cursor by default */
+.r3f-canvas, .r3f-canvas * {
+  cursor: url('/images/Cursor_norm.png'), auto;
+}
+
 /* Generic pointer hover cursor */
 a:hover,
 button:hover,

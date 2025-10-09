@@ -14,7 +14,7 @@ export default function Story() {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="lazy"
       >
         <source src="/assets/videos/rage-story.mp4" type="video/mp4" />
       </video>
@@ -25,7 +25,7 @@ export default function Story() {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="lazy"
       >
         <source src="/assets/videos/s2.mp4" type="video/mp4" />
       </video>
