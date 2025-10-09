@@ -7,7 +7,16 @@ import ControllerInner from "./ControllerInner";
 
 export default function ControllerScene({ animateIn }) {
   return (
-    <Canvas className="w-full h-[90vh]" camera={{ position: [0, 15, 45], fov: 15 }}>
+    <Canvas
+      className="w-full h-[90vh]"
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 15, 45], fov: 15 }}
+      gl={{ stencil: false, powerPreference: "low-power", preserveDrawingBuffer: false }}
+      frameloop="demand"
+      onCreated={({ gl }) => {
+        gl.getContext().getExtension("WEBGL_lose_context");
+      }}
+    >
       <Suspense fallback={null}>
         {/* Lights */}
         <hemisphereLight skyColor={0xffffff} groundColor={0x444444} intensity={2.8} />
@@ -16,7 +25,10 @@ export default function ControllerScene({ animateIn }) {
         <ambientLight intensity={50.5} />
 
         {/* Environment reflections */}
-        <Environment preset="city" />
+        {/* Skip heavy environment on small screens */}
+        {typeof window !== "undefined" && window.innerWidth > 768 ? (
+          <Environment preset="city" />
+        ) : null}
 
         {/* Optional front fill light */}
         <rectAreaLight

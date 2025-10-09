@@ -75,7 +75,11 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
       }
     };
 
+    let rafId = null;
     const handlePointerMove = (e) => {
+      if (rafId) return; // throttle to one rAF
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
       const bounds = gl.domElement.getBoundingClientRect();
       mouse.current.x = ((e.clientX - bounds.left) / bounds.width) * 2 - 1;
       mouse.current.y = -((e.clientY - bounds.top) / bounds.height) * 2 + 1;
@@ -89,6 +93,7 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
       } else {
         gl.domElement.style.cursor = "default";
       }
+      });
     };
 
     gl.domElement.addEventListener("click", handleClick);
@@ -98,6 +103,7 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
       gl.domElement.removeEventListener("click", handleClick);
       gl.domElement.removeEventListener("pointermove", handlePointerMove);
       gl.domElement.style.cursor = "default";
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [button, camera, gl]);
 }

@@ -26,6 +26,9 @@ export default function IntroOverlay({ onFinished }) {
 
     // Start loading and autoplay
     const tryPlay = () => {
+      try {
+        video.currentTime = 0;
+      } catch {}
       video.load();
       const p = video.play();
       if (p && typeof p.catch === "function") {
@@ -38,16 +41,10 @@ export default function IntroOverlay({ onFinished }) {
     };
     tryPlay();
 
-    // Fallback: if not loaded within 2.5s, skip intro
-    const timeout = setTimeout(() => {
-      if (!isVideoLoaded) onFinished?.();
-    }, 2500);
-
     return () => {
       video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("ended", handleEnd);
       video.pause();
-      clearTimeout(timeout);
     };
   }, [onFinished]);
 
@@ -81,7 +78,9 @@ export default function IntroOverlay({ onFinished }) {
         }`}
         muted
         playsInline
-        preload="auto"
+        autoPlay
+        preload="metadata"
+        poster="/assets/usps/1.jpg"
       />
     </div>
   );

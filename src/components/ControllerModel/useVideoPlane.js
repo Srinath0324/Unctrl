@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import * as THREE from "three";
 
+const textureCache = new Map();
+
 export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, planeRef }) {
   useEffect(() => {
     if (!nodes?.Object_55 || !scene) return;
@@ -34,7 +36,7 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
     planeRef.current = plane;
     mesh.parent.add(plane);
 
-    // initial image texture load
+    // helpers
     const loader = new THREE.TextureLoader();
     const tryLoadInOrder = (paths, onSuccess, onFail) => {
       let index = 0;
@@ -61,14 +63,32 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
       `/assets/usps/${idx}.webp`,
     ];
 
-    tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+    const setMaterialMap = (texture) => {
       texture.flipY = true;
       texture.encoding = THREE.LinearSRGBColorSpace;
       texture.minFilter = THREE.LinearFilter;
       texture.generateMipmaps = false;
       material.map = texture;
       material.needsUpdate = true;
-    });
+    };
+
+    // preload the small known set of textures once (1..5)
+    for (let idx = 1; idx <= 5; idx++) {
+      if (textureCache.has(idx)) continue;
+      tryLoadInOrder(buildPaths(idx), (texture) => {
+        textureCache.set(idx, texture);
+      });
+    }
+
+    // initial image texture load
+    const cached = textureCache.get(videoIndex);
+    if (cached) setMaterialMap(cached);
+    else {
+      tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+        textureCache.set(videoIndex, texture);
+        setMaterialMap(texture);
+      });
+    }
 
     return () => {
       if (material.map) {
@@ -111,15 +131,27 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
       `/assets/usps/${idx}.webp`,
     ];
 
-    const oldMap = material.map;
-    tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+    const setMaterialMap = (texture) => {
       texture.flipY = true;
       texture.encoding = THREE.LinearSRGBColorSpace;
       texture.minFilter = THREE.LinearFilter;
       texture.generateMipmaps = false;
       material.map = texture;
       material.needsUpdate = true;
-      if (oldMap) oldMap.dispose();
+    };
+
+    const oldMap = material.map;
+    const cached = textureCache.get(videoIndex);
+    if (cached) {
+      setMaterialMap(cached);
+      if (oldMap && oldMap !== cached && ![...textureCache.values()].includes(oldMap)) oldMap.dispose();
+      return;
+    }
+
+    tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+      textureCache.set(videoIndex, texture);
+      setMaterialMap(texture);
+      if (oldMap && oldMap !== texture && ![...textureCache.values()].includes(oldMap)) oldMap.dispose();
     });
   }, [videoIndex]);
 }
