@@ -31,7 +31,7 @@ export default function Renders() {
         playsInline
         preload="auto"
       >
-        <source src="/assets/videos/controller.mp4" type="video/mp4" />
+        <source src="/assets/videos_old/m.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 

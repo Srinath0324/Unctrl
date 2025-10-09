@@ -6,12 +6,15 @@ import { useEffect, useRef, useState } from "react";
 export default function IntroOverlay({ onFinished }) {
   const videoRef = useRef(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-
-  // Optional: detect mobile for lower-res intro
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
-  const videoSrc = isMobile ? "/assets/videos/introVertical.mp4" : "/assets/videos/intro.mp4";
+  // Keep src stable between SSR and initial client render to avoid hydration mismatch
+  const [videoSrc, setVideoSrc] = useState("/assets/videos/intro.mp4");
 
   useEffect(() => {
+    // After mount, adjust source based on device size
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setVideoSrc("/assets/videos/introVertical.mp4");
+    }
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -22,15 +25,46 @@ export default function IntroOverlay({ onFinished }) {
     video.addEventListener("ended", handleEnd);
 
     // Start loading and autoplay
-    video.load();
-    video.play().catch(() => {});
+    const tryPlay = () => {
+      video.load();
+      const p = video.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {
+          // iOS/Safari may block autoplay until muted is set and play called again
+          video.muted = true;
+          video.play().catch(() => {});
+        });
+      }
+    };
+    tryPlay();
+
+    // Fallback: if not loaded within 2.5s, skip intro
+    const timeout = setTimeout(() => {
+      if (!isVideoLoaded) onFinished?.();
+    }, 2500);
 
     return () => {
       video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("ended", handleEnd);
       video.pause();
+      clearTimeout(timeout);
     };
   }, [onFinished]);
+
+  // Re-run play when the src changes after mount (mobile switch)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    // Reset load state for fade
+    setIsVideoLoaded(false);
+    const p = video.play();
+    if (p && typeof p.catch === "function") {
+      p.catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
+    }
+  }, [videoSrc]);
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">

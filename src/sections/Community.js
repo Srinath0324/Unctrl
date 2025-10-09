@@ -94,7 +94,7 @@ export default function Community() {
           className="absolute bottom-0 sm:-bottom-20 left-1/2 flex items-end"
           style={{
             gap: "180px",
-            transform: "translateX(-140%)", // slightly more to the left
+            transform: "translateX(-130%)", // slightly more to the left
           }}
         >
           <Image
@@ -117,8 +117,8 @@ export default function Community() {
           scale: springScale,
         }}
       >
-        <motion.a href="#community">
-          <UnCtrlButton>Join the CHAOS</UnCtrlButton>
+        <motion.a href="#community"  >
+          <UnCtrlButton ><h1>JOIN THE CHAOS</h1></UnCtrlButton>
         </motion.a>
       </motion.div>
     </>

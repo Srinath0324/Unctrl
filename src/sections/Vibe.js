@@ -7,14 +7,14 @@ import "swiper/css";
 import CoinMan from "../components/CoinMan";
 
 const videos = [
-  "/assets/videos/1.mp4",
-  "/assets/videos/2.mp4",
-  "/assets/videos/3.mp4",
-  "/assets/videos/4.mp4",
-  "/assets/videos/5.mp4",
-  "/assets/videos/6.mp4",
-  "/assets/videos/7.mp4",
-  "/assets/videos/8.mp4",
+  "/assets/vibe/1.mp4",
+  "/assets/vibe/2.mp4",
+  "/assets/vibe/3.mp4",
+  "/assets/vibe/4.mp4",
+  "/assets/vibe/5.mp4",
+  "/assets/vibe/6.mp4",
+  "/assets/vibe/7.mp4",
+  "/assets/vibe/8.mp4",
 ];
 
 function VideoCard({ src }) {

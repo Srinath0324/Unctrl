@@ -7,7 +7,7 @@ import ControllerInner from "./ControllerInner";
 
 export default function ControllerScene({ animateIn }) {
   return (
-    <Canvas camera={{ position: [0, 15, 45], fov: 15 }}>
+    <Canvas className="w-full h-[90vh]" camera={{ position: [0, 15, 45], fov: 15 }}>
       <Suspense fallback={null}>
         {/* Lights */}
         <hemisphereLight skyColor={0xffffff} groundColor={0x444444} intensity={2.8} />

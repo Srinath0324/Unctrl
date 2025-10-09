@@ -5,6 +5,9 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
   const glowMaterialRef = useRef();
+  const isHoveringRef = useRef(false);
+  const isFlashingRef = useRef(false);
+  const idleAnimIdRef = useRef(null);
 
   // glow material setup
   useEffect(() => {
@@ -14,6 +17,27 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
     glowMat.emissiveIntensity = 0;
     button.material = glowMat;
     glowMaterialRef.current = glowMat;
+
+    // Start idle pulsing glow to hint interactivity
+    let start = null;
+    const idleDuration = 2000; // ms
+    const animateIdle = (timestamp) => {
+      if (!glowMaterialRef.current) return;
+      if (start === null) start = timestamp;
+      const t = (timestamp - start) / idleDuration;
+      // Only pulse when not hovering and not flashing
+      if (!isHoveringRef.current && !isFlashingRef.current) {
+        const base = 0.12; // baseline subtle glow
+        const amp = 0.10; // pulse amplitude
+        glowMaterialRef.current.emissiveIntensity = base + Math.abs(Math.sin(t * Math.PI)) * amp;
+      }
+      idleAnimIdRef.current = requestAnimationFrame(animateIdle);
+    };
+    idleAnimIdRef.current = requestAnimationFrame(animateIdle);
+
+    return () => {
+      if (idleAnimIdRef.current) cancelAnimationFrame(idleAnimIdRef.current);
+    };
   }, [button]);
 
   const flashButton = () => {
@@ -25,9 +49,13 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
     const animate = (timestamp) => {
       if (!start) start = timestamp;
       const t = Math.min((timestamp - start) / duration, 1);
+      isFlashingRef.current = true;
       glowMaterialRef.current.emissiveIntensity = Math.sin(t * Math.PI) * maxIntensity;
       if (t < 1) requestAnimationFrame(animate);
-      else glowMaterialRef.current.emissiveIntensity = 0;
+      else {
+        glowMaterialRef.current.emissiveIntensity = 0;
+        isFlashingRef.current = false;
+      }
     };
     requestAnimationFrame(animate);
   };
@@ -54,8 +82,13 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
 
       raycaster.current.setFromCamera(mouse.current, camera);
       const hovering = raycaster.current.intersectObject(button, true).length > 0;
-      if (hovering) gl.domElement.classList.add("fuck-button");
-      else gl.domElement.classList.remove("fuck-button");
+      isHoveringRef.current = hovering;
+      if (hovering) {
+        if (glowMaterialRef.current) glowMaterialRef.current.emissiveIntensity = 0.35;
+        gl.domElement.style.cursor = "pointer";
+      } else {
+        gl.domElement.style.cursor = "default";
+      }
     };
 
     gl.domElement.addEventListener("click", handleClick);
@@ -64,7 +97,7 @@ export default function useButtonInteraction({ button, gl, camera, changeVideo }
     return () => {
       gl.domElement.removeEventListener("click", handleClick);
       gl.domElement.removeEventListener("pointermove", handlePointerMove);
-      gl.domElement.classList.remove("fuck-button");
+      gl.domElement.style.cursor = "default";
     };
   }, [button, camera, gl]);
 }

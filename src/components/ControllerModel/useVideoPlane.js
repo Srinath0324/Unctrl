@@ -5,24 +5,6 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
   useEffect(() => {
     if (!nodes?.Object_55 || !scene) return;
 
-    // create video element
-    const video = document.createElement("video");
-    video.crossOrigin = "Anonymous";
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.autoplay = true;
-    video.src = `/assets/videos/${videoIndex}.mp4`;
-    video.play().catch(() => {});
-    videoRef.current = video;
-
-    // video texture
-    const videoTexture = new THREE.VideoTexture(video);
-    videoTexture.flipY = true;
-    videoTexture.encoding = THREE.LinearSRGBColorSpace;
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.generateMipmaps = false;
-
     const mesh = nodes.Object_55;
     const box = new THREE.Box3().setFromObject(mesh);
     const size = new THREE.Vector3();
@@ -40,7 +22,6 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
 
     const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
     const material = new THREE.MeshBasicMaterial({
-      map: videoTexture,
       side: THREE.DoubleSide,
       toneMapped: false,
     });
@@ -53,22 +34,92 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
     planeRef.current = plane;
     mesh.parent.add(plane);
 
+    // initial image texture load
+    const loader = new THREE.TextureLoader();
+    const tryLoadInOrder = (paths, onSuccess, onFail) => {
+      let index = 0;
+      const attempt = () => {
+        if (index >= paths.length) {
+          onFail && onFail();
+          return;
+        }
+        const path = paths[index++];
+        loader.load(
+          path,
+          (tex) => onSuccess(tex),
+          undefined,
+          () => attempt()
+        );
+      };
+      attempt();
+    };
+
+    const buildPaths = (idx) => [
+      `/assets/usps/${idx}.png`,
+      `/assets/usps/${idx}.jpg`,
+      `/assets/usps/${idx}.jpeg`,
+      `/assets/usps/${idx}.webp`,
+    ];
+
+    tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+      texture.flipY = true;
+      texture.encoding = THREE.LinearSRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+      material.map = texture;
+      material.needsUpdate = true;
+    });
+
     return () => {
+      if (material.map) {
+        material.map.dispose();
+      }
       plane.removeFromParent();
       geometry.dispose();
       material.dispose();
-      video.pause();
-      video.src = "";
     };
   }, [nodes?.Object_55, scene]);
 
-  // video change (without re-creating plane)
+  // image change (without re-creating plane)
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.pause();
-    video.src = `/assets/videos/${videoIndex}.mp4`;
-    video.load();
-    video.onloadedmetadata = () => video.play().catch(() => {});
+    if (!planeRef.current) return;
+    const material = planeRef.current.material;
+    const loader = new THREE.TextureLoader();
+
+    const tryLoadInOrder = (paths, onSuccess, onFail) => {
+      let index = 0;
+      const attempt = () => {
+        if (index >= paths.length) {
+          onFail && onFail();
+          return;
+        }
+        const path = paths[index++];
+        loader.load(
+          path,
+          (tex) => onSuccess(tex),
+          undefined,
+          () => attempt()
+        );
+      };
+      attempt();
+    };
+
+    const buildPaths = (idx) => [
+      `/assets/usps/${idx}.png`,
+      `/assets/usps/${idx}.jpg`,
+      `/assets/usps/${idx}.jpeg`,
+      `/assets/usps/${idx}.webp`,
+    ];
+
+    const oldMap = material.map;
+    tryLoadInOrder(buildPaths(videoIndex), (texture) => {
+      texture.flipY = true;
+      texture.encoding = THREE.LinearSRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+      material.map = texture;
+      material.needsUpdate = true;
+      if (oldMap) oldMap.dispose();
+    });
   }, [videoIndex]);
 }

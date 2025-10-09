@@ -16,7 +16,7 @@ export default function ControllerInner() {
   const planeRef = useRef(null);
 
   const changeVideo = () => {
-    setVideoIndex((prev) => (prev === 8 ? 1 : prev + 1));
+    setVideoIndex((prev) => (prev >= 5 ? 1 : prev + 1));
   };
 
   // setup model scale/pos once
