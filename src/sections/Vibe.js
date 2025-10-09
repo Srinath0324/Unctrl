@@ -1,14 +1,14 @@
 // file: src/sections/Vibe.js
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import CoinMan from "../components/CoinMan";
 
 const videos = [
   "/assets/vibe/1.mp4",
-"/assets/vibe/2.mp4",
+  "/assets/vibe/2.mp4",
   "/assets/vibe/3.mp4",
   "/assets/vibe/4.mp4",
   "/assets/vibe/5.mp4",
@@ -17,43 +17,29 @@ const videos = [
   "/assets/vibe/8.mp4",
 ];
 
-function VideoCard({ src }) {
+function VideoCard({ src, isVisible }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!videoRef.current) return;
-          if (entry.isIntersecting) {
-            if (!videoRef.current.src) {
-              videoRef.current.src = src;
-            }
-            videoRef.current.play().catch(() => {});
-          } else {
-            videoRef.current.pause();
-          }
-        });
-      },
-      { threshold: 0.01 } // play when 1% visible
-    );
-
-    if (videoRef.current) observer.observe(videoRef.current);
-
-    return () => {
-      if (videoRef.current) observer.unobserve(videoRef.current);
-    };
-  }, []);
+    if (!videoRef.current) return;
+    
+    // Play/pause based on visibility
+    if (isVisible) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isVisible]);
 
   return (
     <div className="video-card">
       <video
         ref={videoRef}
-        autoPlay
+        src={src} // Load src immediately, not on intersection
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata" // Changed from "auto" to load faster
         className="video-el"
         draggable={false}
       />
@@ -61,8 +47,7 @@ function VideoCard({ src }) {
   );
 }
 
-
-function Row({ onReady, space = 30 }) {
+function Row({ onReady, space = 30, activeIndex = 0 }) {
   return (
     <div className="w-full relative z-10">
       <Swiper
@@ -76,7 +61,10 @@ function Row({ onReady, space = 30 }) {
       >
         {videos.map((src, i) => (
           <SwiperSlide key={i} className="vibe-slide">
-            <VideoCard src={src} />
+            <VideoCard 
+              src={src} 
+              isVisible={i === activeIndex || i === (activeIndex + 1) % videos.length}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -88,6 +76,10 @@ export default function Vibe() {
   const topRef = useRef(null);
   const bottomRef = useRef(null);
   const runningRef = useRef(false);
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef(null);
+  const [topIndex, setTopIndex] = useState(0);
+  const [bottomIndex, setBottomIndex] = useState(0);
 
   // Animation settings
   const stepSlides = 1;
@@ -95,7 +87,29 @@ export default function Vibe() {
   const pauseBetweenRowsMs = 300;
   const pauseBetweenCyclesMs = 1000;
 
+  // Detect when section is in viewport
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { rootMargin: "200px" } // Start loading 200px before visible
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isInView) return; // Only animate when in view
+
     let cancelled = false;
 
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -109,11 +123,16 @@ export default function Vibe() {
         swiper.on("transitionEnd", handler);
       });
 
-    const moveSteps = async (swiper, direction = "forward", steps = 3) => {
+    const moveSteps = async (swiper, direction = "forward", steps = 3, updateIndex) => {
       if (!swiper) return;
       for (let i = 0; i < steps && !cancelled; i++) {
-        if (direction === "forward") swiper.slideNext(slideDurationMs, true);
-        else swiper.slidePrev(slideDurationMs, true);
+        if (direction === "forward") {
+          swiper.slideNext(slideDurationMs, true);
+          if (updateIndex) updateIndex((prev) => (prev + 1) % videos.length);
+        } else {
+          swiper.slidePrev(slideDurationMs, true);
+          if (updateIndex) updateIndex((prev) => (prev - 1 + videos.length) % videos.length);
+        }
         await waitForTransition(swiper);
       }
     };
@@ -124,10 +143,10 @@ export default function Vibe() {
 
       while (!cancelled) {
         if (topRef.current)
-          await moveSteps(topRef.current, "forward", stepSlides);
+          await moveSteps(topRef.current, "forward", stepSlides, setTopIndex);
         await sleep(pauseBetweenRowsMs);
         if (bottomRef.current)
-          await moveSteps(bottomRef.current, "backward", stepSlides);
+          await moveSteps(bottomRef.current, "backward", stepSlides, setBottomIndex);
         await sleep(pauseBetweenCyclesMs);
       }
     };
@@ -137,16 +156,20 @@ export default function Vibe() {
       cancelled = true;
       runningRef.current = false;
     };
-  }, []);
+  }, [isInView]);
 
   return (
-    <section className="relative min-h-[100vh] bg-black flex flex-col justify-center items-center pt-20 pb-5">
+    <section 
+      ref={sectionRef}
+      className="relative min-h-[100vh] bg-black flex flex-col justify-center items-center pt-20 pb-5"
+    >
       <div className="w-full max-w-[1600px] px-4 md:px-6 relative flex flex-col items-center space-y-4 md:space-y-6">
         {/* Top row */}
         <Row
           onReady={(s) => {
             topRef.current = s;
           }}
+          activeIndex={topIndex}
         />
 
         {/* Bottom row with horizontal offset */}
@@ -155,6 +178,7 @@ export default function Vibe() {
             onReady={(s) => {
               bottomRef.current = s;
             }}
+            activeIndex={bottomIndex}
           />
         </div>
 
@@ -190,6 +214,8 @@ export default function Vibe() {
           display: block;
           will-change: transform;
           transform: translateZ(0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
         .bottom-row-offset {
           transform: translateX(-112px);
