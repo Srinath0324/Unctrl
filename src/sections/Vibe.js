@@ -8,7 +8,7 @@ import CoinMan from "../components/CoinMan";
 
 const videos = [
   "/assets/vibe/1.mp4",
-  "/assets/vibe/2.mp4",
+"/assets/vibe/2.mp4",
   "/assets/vibe/3.mp4",
   "/assets/vibe/4.mp4",
   "/assets/vibe/5.mp4",
@@ -26,6 +26,9 @@ function VideoCard({ src }) {
         entries.forEach((entry) => {
           if (!videoRef.current) return;
           if (entry.isIntersecting) {
+            if (!videoRef.current.src) {
+              videoRef.current.src = src;
+            }
             videoRef.current.play().catch(() => {});
           } else {
             videoRef.current.pause();
@@ -46,12 +49,11 @@ function VideoCard({ src }) {
     <div className="video-card">
       <video
         ref={videoRef}
-        src={src}
         autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         className="video-el"
         draggable={false}
       />

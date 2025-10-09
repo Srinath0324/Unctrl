@@ -9,9 +9,9 @@ export default function ControllerScene({ animateIn }) {
   return (
     <Canvas
       className="w-full h-[90vh]"
-      dpr={[1, 1.5]}
+      dpr={[1, 1.25]}
       camera={{ position: [0, 15, 45], fov: 15 }}
-      gl={{ stencil: false, powerPreference: "low-power", preserveDrawingBuffer: false }}
+      gl={{ antialias: false, alpha: false, stencil: false, powerPreference: "low-power", preserveDrawingBuffer: false }}
       frameloop="demand"
       onCreated={({ gl }) => {
         gl.getContext().getExtension("WEBGL_lose_context");

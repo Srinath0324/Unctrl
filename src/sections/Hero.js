@@ -45,6 +45,14 @@ export default function Hero() {
           video.play().catch(() => {});
         });
       }
+      // Warm critical 3D assets once video can play
+      const onCanPlay = async () => {
+        try {
+          const mod = await import("@/components/ControllerModel/preloadAssets");
+          mod.preloadControllerAssets?.();
+        } catch {}
+      };
+      video.addEventListener("canplay", onCanPlay, { once: true });
     } else {
       video.pause();
     }
@@ -73,7 +81,7 @@ export default function Hero() {
             muted
             playsInline
             preload="none"
-            poster="/images/rage-apng.png"
+            poster="/images/logo.png"
             src={isInView ? (isMobile ? mobileSrc : desktopSrc) : undefined}
           />
         </div>

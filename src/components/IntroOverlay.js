@@ -80,7 +80,7 @@ export default function IntroOverlay({ onFinished }) {
         playsInline
         autoPlay
         preload="metadata"
-        poster="/assets/usps/1.jpg"
+        poster="/assets/usps/1.webp"
       />
     </div>
   );

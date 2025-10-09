@@ -70,7 +70,7 @@ export default function Community() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
         >
           <source src="/assets/videos/community.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -83,7 +83,7 @@ export default function Community() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
         >
           <source src="/assets/videos/communityVertical.mp4" type="video/mp4" />
           Your browser does not support the video tag.

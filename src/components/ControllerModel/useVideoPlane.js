@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 const textureCache = new Map();
 
-export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, planeRef }) {
+export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, planeRef, invalidate }) {
+  const currentLoadRequestIdRef = useRef(0);
   useEffect(() => {
     if (!nodes?.Object_55 || !scene) return;
 
@@ -38,6 +39,8 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
 
     // helpers
     const loader = new THREE.TextureLoader();
+    const bitmapLoader = new THREE.ImageBitmapLoader();
+    bitmapLoader.setOptions({ imageOrientation: "flipY", premultiplyAlpha: "none" });
     const tryLoadInOrder = (paths, onSuccess, onFail) => {
       let index = 0;
       const attempt = () => {
@@ -46,21 +49,32 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
           return;
         }
         const path = paths[index++];
-        loader.load(
-          path,
-          (tex) => onSuccess(tex),
-          undefined,
-          () => attempt()
-        );
+        // Prefer off-main-thread decode
+        if (typeof createImageBitmap !== "undefined") {
+          bitmapLoader.load(
+            path,
+            (imageBitmap) => {
+              const tex = new THREE.CanvasTexture(imageBitmap);
+              onSuccess(tex);
+            },
+            undefined,
+            () => {
+              // fallback to TextureLoader on failure
+              loader.load(path, (tex) => onSuccess(tex), undefined, () => attempt());
+            }
+          );
+        } else {
+          loader.load(path, (tex) => onSuccess(tex), undefined, () => attempt());
+        }
       };
       attempt();
     };
 
     const buildPaths = (idx) => [
+      `/assets/usps/${idx}.webp`,
       `/assets/usps/${idx}.png`,
       `/assets/usps/${idx}.jpg`,
       `/assets/usps/${idx}.jpeg`,
-      `/assets/usps/${idx}.webp`,
     ];
 
     const setMaterialMap = (texture) => {
@@ -70,6 +84,8 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
       texture.generateMipmaps = false;
       material.map = texture;
       material.needsUpdate = true;
+      // Ensure a frame renders after swap
+      invalidate?.();
     };
 
     // preload the small known set of textures once (1..5)
@@ -84,9 +100,16 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
     const cached = textureCache.get(videoIndex);
     if (cached) setMaterialMap(cached);
     else {
+      const requestId = ++currentLoadRequestIdRef.current;
       tryLoadInOrder(buildPaths(videoIndex), (texture) => {
-        textureCache.set(videoIndex, texture);
-        setMaterialMap(texture);
+        // Only apply if this is still the latest request
+        if (requestId === currentLoadRequestIdRef.current) {
+          textureCache.set(videoIndex, texture);
+          setMaterialMap(texture);
+        } else {
+          // not latest, dispose to avoid leaks
+          texture.dispose?.();
+        }
       });
     }
 
@@ -105,6 +128,8 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
     if (!planeRef.current) return;
     const material = planeRef.current.material;
     const loader = new THREE.TextureLoader();
+    const bitmapLoader = new THREE.ImageBitmapLoader();
+    bitmapLoader.setOptions({ imageOrientation: "flipY", premultiplyAlpha: "none" });
 
     const tryLoadInOrder = (paths, onSuccess, onFail) => {
       let index = 0;
@@ -114,21 +139,28 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
           return;
         }
         const path = paths[index++];
-        loader.load(
-          path,
-          (tex) => onSuccess(tex),
-          undefined,
-          () => attempt()
-        );
+        if (typeof createImageBitmap !== "undefined") {
+          bitmapLoader.load(
+            path,
+            (imageBitmap) => {
+              const tex = new THREE.CanvasTexture(imageBitmap);
+              onSuccess(tex);
+            },
+            undefined,
+            () => loader.load(path, (tex) => onSuccess(tex), undefined, () => attempt())
+          );
+        } else {
+          loader.load(path, (tex) => onSuccess(tex), undefined, () => attempt());
+        }
       };
       attempt();
     };
 
     const buildPaths = (idx) => [
+      `/assets/usps/${idx}.webp`,
       `/assets/usps/${idx}.png`,
       `/assets/usps/${idx}.jpg`,
       `/assets/usps/${idx}.jpeg`,
-      `/assets/usps/${idx}.webp`,
     ];
 
     const setMaterialMap = (texture) => {
@@ -138,6 +170,7 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
       texture.generateMipmaps = false;
       material.map = texture;
       material.needsUpdate = true;
+      invalidate?.();
     };
 
     const oldMap = material.map;
@@ -148,10 +181,16 @@ export default function useVideoPlane({ nodes, scene, videoIndex, videoRef, plan
       return;
     }
 
+    const requestId = ++currentLoadRequestIdRef.current;
     tryLoadInOrder(buildPaths(videoIndex), (texture) => {
-      textureCache.set(videoIndex, texture);
-      setMaterialMap(texture);
-      if (oldMap && oldMap !== texture && ![...textureCache.values()].includes(oldMap)) oldMap.dispose();
+      // Only apply if latest request
+      if (requestId === currentLoadRequestIdRef.current) {
+        textureCache.set(videoIndex, texture);
+        setMaterialMap(texture);
+        if (oldMap && oldMap !== texture && ![...textureCache.values()].includes(oldMap)) oldMap.dispose();
+      } else {
+        texture.dispose?.();
+      }
     });
   }, [videoIndex]);
 }

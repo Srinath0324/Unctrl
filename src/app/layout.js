@@ -17,6 +17,9 @@ export const metadata = {
 export default function RootLayout({ children, showIntroOverlay }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preload" href="/models/c3.glb" as="fetch" crossOrigin="anonymous" />
+      </head>
       <body
         suppressHydrationWarning
         className={`${chakra.variable} antialiased bg-[#020104] text-white`}

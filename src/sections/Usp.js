@@ -23,11 +23,28 @@ export default function Usp() {
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0, rootMargin: "1200px 0px" }
     );
 
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  // Fallback idle preloader in case Hero didn't trigger it (e.g., immediate scroll)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const run = () => {
+      import("@/components/ControllerModel/preloadAssets")
+        .then((m) => m.preloadControllerAssets?.())
+        .catch(() => {});
+      // Pre-warm the scene module as well
+      import("@/components/ControllerModel/ControllerScene").catch(() => {});
+    };
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(run, { timeout: 1000 });
+    } else {
+      setTimeout(run, 500);
+    }
   }, []);
 
   return (
