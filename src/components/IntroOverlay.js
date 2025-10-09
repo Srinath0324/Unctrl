@@ -79,7 +79,7 @@ export default function IntroOverlay({ onFinished }) {
         muted
         playsInline
         autoPlay
-        preload="metadata"
+        preload="auto"
         poster="/assets/usps/1.webp"
       />
     </div>

@@ -18,7 +18,11 @@ export default function RootLayout({ children, showIntroOverlay }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preload" href="/models/c3.glb" as="fetch" crossOrigin="anonymous" />
+        {/* Highest priority: intro videos for first paint */}
+        <link rel="preload" as="video" href="/assets/videos/intro.mp4" />
+        <link rel="preload" as="video" href="/assets/videos/introVertical.mp4" media="(max-width: 768px)" />
+        {/* Keep 3D model low priority to avoid contention */}
+        <link rel="prefetch" href="/models/c3.glb" as="fetch" crossOrigin="anonymous" />
       </head>
       <body
         suppressHydrationWarning
