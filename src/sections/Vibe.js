@@ -53,7 +53,7 @@ function VideoCard({ src }) {
         muted
         loop
         playsInline
-        preload="none"
+        preload="auto"
         className="video-el"
         draggable={false}
       />
