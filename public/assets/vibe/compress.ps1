@@ -1,7 +1,17 @@
 Get-ChildItem -File -Include *.mp4, *.mov, *.avi, *.mkv | ForEach-Object {
-    $temp = "$($_.DirectoryName)\temp_$($_.Name)"
-    ffmpeg -i $_.FullName -vcodec libx264 -preset fast -crf 28 -an $temp
-    Move-Item -Force $temp $_.FullName
-    Write-Host "✅ Compressed $($_.Name)"
+    $input = $_.FullName
+    $output = ".\temp_$($_.Name)"
+
+    # Compress video (no audio, CRF 28)
+    ffmpeg -y -i "$input" -vcodec libx264 -preset fast -crf 28 -an "$output"
+
+    # Replace only if compression succeeded
+    if (Test-Path "$output") {
+        Move-Item -Force "$output" "$input"
+        Write-Host "✅ Compressed and replaced: $($_.Name)"
+    } else {
+        Write-Host "❌ Failed: $($_.Name)"
+    }
 }
-Write-Host "✅ All videos compressed and replaced in place"
+
+Write-Host "🎉 All videos in current folder processed."
